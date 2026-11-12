@@ -58,10 +58,12 @@ class ValidationTests(unittest.TestCase):
 
     def test_v3_types_do_not_crash(self):
         self.check_rule("V3", [None, [], "place", 42, True])
-        for field in (*VALID, "tags", "image", "image_credit", "nsa_id", "address", "description"):
+        for field in (*VALID, "tags", "images", "nsa_id", "address", "description"):
             with self.subTest(field=field):
                 self.check_rule("V3", self.changed(**{field: {"bad": "type"}}))
         self.check_rule("V3", self.changed(tags=[None, [], {}], sources=[1, {}]))
+        self.check_rule("V3", self.changed(images=[]))
+        self.check_rule("V3", self.changed(images=["not-a-dict", 1]))
 
     def test_v4_slug_and_uniqueness(self):
         for slug in ("Upper", "a_b", "-start", "end-", "a--b", "中文", "a\n"):
@@ -105,22 +107,37 @@ class ValidationTests(unittest.TestCase):
                 self.check_rule("V9", self.changed(updated_at=value))
         self.assertEqual(validate(self.changed(updated_at="2024-02-29"), today=TODAY), [])
 
-    def test_v10_image_paths_file_and_credit(self):
-        path = f"assets/img/{VALID['slug']}.png"
+    def test_v10_images_paths_file_and_credit(self):
+        slug = VALID["slug"]
+        credit = "交通部觀光署澎湖國家風景區管理處官網(https://www.penghu-nsa.gov.tw/x)"
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
-            image = root / path
-            image.parent.mkdir(parents=True)
-            image.write_bytes(b"test fixture, not a real photo")
-            good = self.changed(image=path, image_credit="測試用授權")
+            for number in (1, 2):
+                image = root / f"assets/img/{slug}-{number}.jpg"
+                image.parent.mkdir(parents=True, exist_ok=True)
+                image.write_bytes(b"test fixture, not a real photo")
+            images = [{"src": f"assets/img/{slug}-{n}.jpg", "credit": credit} for n in (1, 2)]
+            good = self.changed(images=images)
             self.assertEqual(validate(good, root=root, today=TODAY), [])
-            for fields in ({"image": path}, {"image": path, "image_credit": " "},
-                           {"image": "https://example.org/photo.jpg", "image_credit": "攝影者"},
-                           {"image": "assets/img/other.png", "image_credit": "攝影者"},
-                           {"image": "assets/img/../../secret.png", "image_credit": "攝影者"}):
-                with self.subTest(fields=fields):
-                    self.assertTrue(any("[V10]" in e for e in validate(self.changed(**fields), root=root, today=TODAY)))
-            image.unlink()
+            bad_cases = (
+                # 缺 credit / credit 空白
+                [{"src": f"assets/img/{slug}-1.jpg"}],
+                [{"src": f"assets/img/{slug}-1.jpg", "credit": " "}],
+                # 外連、別的 slug、舊版單圖命名、編號不連號、路徑穿越
+                [{"src": "https://example.org/p.jpg", "credit": credit}],
+                [{"src": "assets/img/other-1.jpg", "credit": credit}],
+                [{"src": f"assets/img/{slug}.jpg", "credit": credit}],
+                [{"src": f"assets/img/{slug}-2.jpg", "credit": credit}],
+                [{"src": "assets/img/../../secret-1.jpg", "credit": credit}],
+                # 副檔名大寫 / 物件多欄位
+                [{"src": f"assets/img/{slug}-1.JPG", "credit": credit}],
+                [{"src": f"assets/img/{slug}-1.jpg", "credit": credit, "extra": 1}],
+            )
+            for images_bad in bad_cases:
+                with self.subTest(images=images_bad):
+                    errors = validate(self.changed(images=images_bad), root=root, today=TODAY)
+                    self.assertTrue(any("[V10]" in e or "[V2]" in e for e in errors), errors)
+            (root / f"assets/img/{slug}-2.jpg").unlink()
             self.assertTrue(any("[V10]" in e for e in validate(good, root=root, today=TODAY)))
 
     def test_v11_guid(self):

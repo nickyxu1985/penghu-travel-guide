@@ -2,6 +2,22 @@
 
 每個任務完成或進入新階段時更新本檔。下一棒 agent 進場先讀文件鏈(SPEC → SDD → AGENTS → TASKS),再從本檔最新一筆接手。
 
+## 目前狀態:T11 官網照片全量入庫完成,PR 已開至 dev(待 Nicky 合併);GitHub Pages 已改從 dev 發佈
+
+### T11(Instinct)— 官網照片全量入庫 + 多圖 schema(2026-11-12)
+
+- 授權依據:Nicky 向澎管處承辦人確認官網照片可使用,條件為標機關署名 + 註明出處(WhatsApp 2026-11-12 16:16 Nicky 原話:「1.機關署名 2.註明出處即可 3.有的照片都抓」)。官網無攝影者欄位,只能標機關名。
+- **schema 由單圖改多圖**:`image`/`image_credit` 移除,改 `images: [{"src", "credit"}]`;`src` 為 `assets/img/<slug>-<n>.<ext>`(n 由 1 起連號、副檔名小寫),`credit` 固定「交通部觀光署澎湖國家風景區管理處官網(該景點詳情頁 URL)」,每張可回溯出處頁。同步更新 AGENTS.md §3/§5/§6/§8、SDD.md §1/§3.2/§4/§5、validate.py(V10)、test_validate.py(15 測試全過)。
+- 新增 `scripts/fetch_photos.py`:抓詳情頁 swiper 輪播(id 含 `repPhoto`;`repNearScenery` 鄰近景點縮圖排除),沿用 fetch_nsa.py 的 UA、≥1.2s 節流、指數退避、`--cache-dir` 續跑;解析 0 張(官網偶發異常)會清快取重抓 3 次。支援 `--start/--limit` 分批。
+- **成果:139/139 筆全有照片,共 389 張,無失敗頁。** 原圖 561MB(部分 PNG 達 5MB),已統一轉 JPEG q88、最寬 1280px 後 **77MB** 再入庫(避免 git 歷史膨脹與頁面過重;原始大尺寸可隨時用 fetch_photos.py 重抓)。
+- 前端:詳情頁改多圖輪播(上一張/下一張 + 計數,單張不出現控制鈕),圖下下顯示「圖片來源:交通部觀光署澎湖國家風景區管理處官網」+ 詳情頁連結;首頁卡片用 `images[0]` 當主圖;style.css 新增 `place-gallery` 系列樣式(沿用色票變數)。
+- GitHub Pages 已應 Nicky 要求改為 **dev 分支 / (root)** 發佈:https://nickyxu1985.github.io/penghu-travel-guide/
+- `python scripts/validate.py` 139 筆全綠、15 個單元測試全過。PR 進 dev,保持未合併,由 Nicky 決定。
+
+### 給下一棒
+
+- 合併 T11 PR 後,到 Pages 網址隨機點幾個詳情頁確認輪播與署名連結正常。
+- 之後重跑 fetch_nsa.py 更新景點時,`images` 屬人工確認欄位會被保留(合併邏輯保留);要重抓照片用 `python3 scripts/fetch_photos.py --cache-dir <dir>`(需 `pip install pypinyin`)。
 ## 目前狀態:T8 資料品質把關完成,PR #9 已開至 dev(CI 綠燈,待 Nicky 合併),下一棒 T9(Cue 執行 / Muse 驗收)
 
 ### T8(Cue)—資料品質把關(2026-11-12)

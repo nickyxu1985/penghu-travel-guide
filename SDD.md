@@ -6,6 +6,7 @@
 
 ```
 澎管處官網 ──fetch_nsa.py──▶ data/places.json ──validate.py(CI)──▶ PR 進 dev
+         └──fetch_photos.py──▶ assets/img/ + places.json 各筆 images
                                      │
                                      ▼  瀏覽器 fetch(純前端)
                           index.html + main.js  → 卡片列表 + 篩選
@@ -40,7 +41,7 @@
 
 1. 讀 `?slug=`;缺少 → 友善提示 + 回列表連結。
 2. 同一份 `places.json` 中找 `slug` 相符的一筆;找不到 → 「查無此景點」。
-3. 顯示順序:圖片(有才顯示,附 `image_credit`)→ 類型 · 地區 → 名稱 → 摘要 → 詳細介紹(依 `\n\n` 分段)→ 地址 → 標籤 → 易變資訊提醒 → 來源連結(`sources[0]` 標為「澎管處官網介紹」,其餘標「參考資料 N」)→ 資料整理日。
+3. 顯示順序:圖片(有才顯示,多張為輪播,附 credit「圖片來源:署名」+ 出處頁連結)→ 類型 · 地區 → 名稱 → 摘要 → 詳細介紹(依 `\n\n` 分段)→ 地址 → 標籤 → 易變資訊提醒 → 來源連結(`sources[0]` 標為「澎管處官網介紹」,其餘標「參考資料 N」)→ 資料整理日。
 4. `document.title` 設為 `<name> | 澎湖旅遊指南`。
 
 ### 3.3 共通規則
@@ -67,7 +68,7 @@
 | V7 | `tags` 0–5 個、每個 2–8 字、不重複 |
 | V8 | `sources` ≥ 1,全部 `https://`;`sources[0]` 網域為 `www.penghu-nsa.gov.tw` |
 | V9 | `updated_at` 為合法日期 `YYYY-MM-DD`,且不晚於今天 |
-| V10 | 有 `image` 時:路徑為 `assets/img/<slug>.(jpg|jpeg|png|webp)`、檔案存在、`image_credit` 非空 |
+| V10 | 有 `images` 時:非空物件陣列,每張 `src` 為 `assets/img/<slug>-<n>.(jpg|jpeg|png|webp)`(n 由 1 起連號)、檔案存在,`credit` 非空 |
 | V11 | `nsa_id`(若有)為 GUID 格式,且全檔唯一 |
 | V12 | 陣列依 `area` → `name` 排序(錯誤訊息提示正確位置) |
 | V13 | 任何字串欄位不得含 `data:image`(擋 base64 內嵌圖) |
@@ -79,6 +80,7 @@
 **來源頁面:**
 
 - 列表:`https://www.penghu-nsa.gov.tw/TravelInformationSceneryListC001200.aspx?appname=TravelInformationSceneryListC001200`(列表上有名稱、類型、鄉市、詳情頁連結)
+- 照片:詳情頁 swiper 輪播的 `FileDownLoad/TravelInformation/NotSet/<timestamp>.<ext>` 相對路徑,補官網前綴;NotSet 即最大尺寸(`fetch_photos.py`,T11 實作)
 - 詳情:`https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=<GUID>&Language=1028`
 - 官網為純 HTML、不需 JS 渲染(Instinct 2026-11-12 實測)。
 
@@ -94,7 +96,7 @@
 | `description` | 詳情頁介紹全文 | 去 HTML、去「追星資訊」「看看環景」等外連段落,段落以 `\n\n` 連接,≤ 600 字在段落邊界截斷 |
 | `address` | 景點資訊「地址」 | 原樣 |
 | `tags` | — | 不自動產生,留空,由 T8 人工補 |
-| `image` / `image_credit` | — | **不抓**(官網照片多為攝影比賽作品,授權未確認) |
+| `images` | 詳情頁 swiper 輪播(id 含 `repPhoto` 的 img;`repNearScenery` 為鄰近景點縮圖,不抓) | `fetch_photos.py` 全量抓取,存 `assets/img/<slug>-<n>.<ext>`;`credit` 固定「交通部觀光署澎湖國家風景區管理處官網(詳情頁 URL)」(已與澎管處承辦人確認:標機關署名+註明出處即可使用;官網無攝影者欄位) |
 | `sources[0]` | 詳情頁 URL | 正規化為 `...?Cond=<GUID>&Language=1028` |
 | `nsa_id` | URL 中 `Cond` | 小寫 GUID |
 | `updated_at` | — | 執行當日日期 |
@@ -103,7 +105,7 @@
 
 **更新與合併:**
 
-- 以 `nsa_id` 對應既有資料:已存在的景點只更新 `name / area / category / address / sources / updated_at`,**保留人工改寫過的 `summary`、`description`、`tags`、`image`**。
+- 以 `nsa_id` 對應既有資料:已存在的景點只更新 `name / area / category / address / sources / updated_at`,**保留人工改寫過的 `summary`、`description`、`tags`、`images`**。
 - 官網已下架的景點不自動刪除,只在輸出報告列出,交人工決定。
 - 腳本最後自動呼叫 validate,不通過就不寫檔。
 - `summary` 自動擷取的版本只是草稿;T8 抽審改寫時,依 AGENTS.md §8 第 4 條處理。

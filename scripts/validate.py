@@ -18,9 +18,13 @@ REQUIRED_FIELDS = frozenset({
 })
 ARRAY_FIELDS = frozenset({"tags", "sources"})
 ALLOWED_FIELDS = REQUIRED_FIELDS | frozenset({
-    "description", "address", "tags", "image", "image_credit", "nsa_id",
+    "description", "address", "tags", "images", "nsa_id",
 })
-STRING_FIELDS = ALLOWED_FIELDS - ARRAY_FIELDS
+IMAGE_FIELDS = frozenset({"src", "credit"})
+IMAGE_SRC_PATTERN = re.compile(
+    r"assets/img/(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)-(?P<number>[0-9]+)"
+    r"\.(?:jpg|jpeg|png|webp)\Z")
+STRING_FIELDS = ALLOWED_FIELDS - ARRAY_FIELDS - {"images"}  # images 為物件陣列,V10 專項檢查
 SLUG_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 GUID_PATTERN = re.compile(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}")
 DATE_PATTERN = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
@@ -148,19 +152,33 @@ def validate(places, root=REPO_ROOT, today=None):
                 if parsed_date > today:
                     error("V9", "updated_at", f"不得晚於今天 {today.isoformat()}")
 
-        if "image" in place:
-            image = place["image"]
-            expected = {f"assets/img/{slug}.{ext}" for ext in ("jpg", "jpeg", "png", "webp")}
-            if isinstance(image, str):
-                if image not in expected or not SLUG_PATTERN.fullmatch(slug):
-                    error("V10", "image", "路徑須為 assets/img/<slug>.(jpg|jpeg|png|webp)")
-                else:
-                    path = Path(root) / image
-                    if not path.is_file() or not path.resolve().is_relative_to(Path(root).resolve()):
-                        error("V10", "image", "repo 內圖片檔案不存在或路徑超出 repo")
-            credit = place.get("image_credit")
-            if not isinstance(credit, str) or not credit.strip():
-                error("V10", "image_credit", "有 image 時必須填寫非空攝影者 / 授權來源")
+        if "images" in place:
+            images = place["images"]
+            if not isinstance(images, list) or not images:
+                error("V3", "images", "必須為非空物件陣列")
+            else:
+                for index, image in enumerate(images, 1):
+                    field = f"images[{index - 1}]"
+                    if not isinstance(image, dict):
+                        error("V3", field, "必須為 {src, credit} 物件")
+                        continue
+                    for key in sorted(image.keys() - IMAGE_FIELDS):
+                        error("V2", f"{field}.{key}", "不允許的欄位")
+                    src = image.get("src")
+                    if not isinstance(src, str):
+                        error("V3", f"{field}.src", "必須為字串")
+                    else:
+                        match = IMAGE_SRC_PATTERN.fullmatch(src)
+                        if not match or match["slug"] != slug or int(match["number"]) != index:
+                            error("V10", f"{field}.src",
+                                  "路徑須為 assets/img/<slug>-<n>.(jpg|jpeg|png|webp),n 由 1 起連號")
+                        else:
+                            path = Path(root) / src
+                            if not path.is_file() or not path.resolve().is_relative_to(Path(root).resolve()):
+                                error("V10", f"{field}.src", "repo 內圖片檔案不存在或路徑超出 repo")
+                    credit = image.get("credit")
+                    if not isinstance(credit, str) or not credit.strip():
+                        error("V10", f"{field}.credit", "每張圖必須填寫非空署名 / 授權來源")
 
         nsa_id = place.get("nsa_id")
         if isinstance(nsa_id, str):

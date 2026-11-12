@@ -22,7 +22,8 @@
 | T6 | Instinct | fetch_nsa.py 景點全量入庫,過 validate | T5 | places.json 全量資料 PR 進 dev;CI 全綠 | ✅ 完成(PR #8 進 dev,待 Nicky merge) |
 | T7 | Muse | 審 T2/T3/T4 PR(rubric 七節、閱讀鏈、視覺 QA),開 issue 不直接改 | T2、T3、T4 | 審查意見以 issue 呈現,署名清楚;不直接 push 修改 | ✅ 完成(issue #3/#4/#5 已修並關閉) |
 | T8 | Cue | 資料品質把關:summary 抽審、category 校正;W8 精選 8 筆備援 | T6 | 抽審結果以 issue 或 PR 呈現;8 筆備援資料可用 | ✅ 完成(PR #9 進 dev,CI 綠燈,待 Nicky merge) |
-| T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 待開始 |
+| T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 不適用(T6 全量入庫涵蓋,官網已無未收錄景點) |
+| T11 | Instinct | 官網照片全量入庫:schema 改多圖 `images`、fetch_photos.py 抓全部照片、詳情頁輪播+署名出處、validator/文件同步 | T6 | 139 筆 images 入庫;validate 與單元測試全綠;PR 進 dev | ✅ 完成(PR #10 進 dev,待 Nicky merge) |
 | T10 | Nicky | 11/16(週一)繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 繳交 | 待開始 |
 
 ## 驗收方法論對應

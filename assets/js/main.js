@@ -64,8 +64,9 @@
         }).join('') + '</ul>'
       : '';
 
-    var img = place.image
-      ? '<img class="place-card-image" src="' + escapeHtml(place.image) + '" alt="' + escapeHtml(place.name) + '" loading="lazy">'
+    var first = Array.isArray(place.images) && place.images.length ? place.images[0] : null;
+    var img = first
+      ? '<img class="place-card-image" src="' + escapeHtml(first.src) + '" alt="' + escapeHtml(place.name) + '" loading="lazy">'
       : '';
 
     card.innerHTML =

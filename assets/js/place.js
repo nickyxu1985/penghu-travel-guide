@@ -38,6 +38,54 @@
     }).join('');
   }
 
+  /** credit 格式為「署名(出處頁 URL)」時,渲染成「圖片來源:<連結>」。 */
+  function renderCredit(credit) {
+    var text = String(credit || '');
+    var match = text.match(/^(.*)\((https:\/\/[^()]+)\)$/);
+    if (match && isSafeUrl(match[2])) {
+      return '圖片來源:<a href="' + escapeHtml(match[2]) + '" target="_blank" rel="noopener">' +
+        escapeHtml(match[1]) + '</a>';
+    }
+    return '圖片來源:' + escapeHtml(text);
+  }
+
+  function renderFigure(images, name) {
+    if (!Array.isArray(images) || !images.length) { return ''; }
+    var first = images[0];
+    if (!first || typeof first.src !== 'string') { return ''; }
+    var nav = images.length > 1
+      ? '<button type="button" class="place-gallery-nav place-gallery-prev" aria-label="上一張照片">&#8249;</button>' +
+        '<button type="button" class="place-gallery-nav place-gallery-next" aria-label="下一張照片">&#8250;</button>' +
+        '<span class="place-gallery-counter">1 / ' + images.length + '</span>'
+      : '';
+    return '<figure class="place-figure place-gallery">' +
+      '<div class="place-gallery-stage">' +
+      '<img class="place-image" src="' + escapeHtml(first.src) + '" alt="' + escapeHtml(name) + '">' +
+      nav +
+      '</div>' +
+      '<figcaption class="place-image-credit">' + renderCredit(first.credit) + '</figcaption>' +
+      '</figure>';
+  }
+
+  /** 輪播行為:切換圖片、計數與 credit。 */
+  function initGallery(container, images, name) {
+    var gallery = container.querySelector('.place-gallery');
+    if (!gallery || images.length < 2) { return; }
+    var image = gallery.querySelector('.place-image');
+    var counter = gallery.querySelector('.place-gallery-counter');
+    var credit = gallery.querySelector('.place-image-credit');
+    var index = 0;
+    function show(next) {
+      index = (next + images.length) % images.length;
+      image.src = images[index].src;
+      image.alt = name;
+      counter.textContent = (index + 1) + ' / ' + images.length;
+      credit.innerHTML = renderCredit(images[index].credit);
+    }
+    gallery.querySelector('.place-gallery-prev').addEventListener('click', function () { show(index - 1); });
+    gallery.querySelector('.place-gallery-next').addEventListener('click', function () { show(index + 1); });
+  }
+
   function renderSources(sources) {
     if (!Array.isArray(sources)) { return ''; }
     var items = [];
@@ -56,12 +104,7 @@
     if (place.category) { meta.push('<strong>' + escapeHtml(place.category) + '</strong>'); }
     if (place.area) { meta.push(escapeHtml(place.area)); }
 
-    var figure = place.image
-      ? '<figure class="place-figure">' +
-        '<img class="place-image" src="' + escapeHtml(place.image) + '" alt="' + escapeHtml(place.name) + '">' +
-        (place.image_credit ? '<figcaption class="place-image-credit">攝影/授權:' + escapeHtml(place.image_credit) + '</figcaption>' : '') +
-        '</figure>'
-      : '';
+    var figure = renderFigure(place.images, place.name);
 
     var tags = Array.isArray(place.tags) && place.tags.length
       ? '<ul class="place-tags">' + place.tags.map(function (t) {
@@ -80,6 +123,8 @@
       '<p class="place-notice">開放時間、交通與潮汐會變動,出發前請至官網確認。</p>' +
       renderSources(place.sources) +
       (place.updated_at ? '<p class="place-updated">資料整理日:' + escapeHtml(place.updated_at) + '</p>' : '');
+
+    initGallery(container, Array.isArray(place.images) ? place.images : [], place.name || '');
   }
 
   function init() {
