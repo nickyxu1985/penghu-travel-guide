@@ -21,7 +21,7 @@
 | T5 | Instinct | validate.py + validate.yml(CI 擋壞資料) | T3(schema 定案) | CI workflow 進 dev;壞 schema 的資料會被擋下 | ✅ 已合併 dev(PR #6) |
 | T6 | Instinct | fetch_nsa.py 景點全量入庫,過 validate | T5 | places.json 全量資料 PR 進 dev;CI 全綠 | ✅ 完成(PR #8 進 dev,待 Nicky merge) |
 | T7 | Muse | 審 T2/T3/T4 PR(rubric 七節、閱讀鏈、視覺 QA),開 issue 不直接改 | T2、T3、T4 | 審查意見以 issue 呈現,署名清楚;不直接 push 修改 | ✅ 完成(issue #3/#4/#5 已修並關閉) |
-| T8 | Cue | 資料品質把關:summary 抽審、category 校正;W8 精選 8 筆備援 | T6 | 抽審結果以 issue 或 PR 呈現;8 筆備援資料可用 | 待開始 |
+| T8 | Cue | 資料品質把關:summary 抽審、category 校正;W8 精選 8 筆備援 | T6 | 抽審結果以 issue 或 PR 呈現;8 筆備援資料可用 | 進行中(2026-11-12) |
 | T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 待開始 |
 | T10 | Nicky | 11/16(週一)繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 繳交 | 待開始 |
 
