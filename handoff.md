@@ -2,7 +2,22 @@
 
 每個任務完成或進入新階段時更新本檔。下一棒 agent 進場先讀文件鏈(SPEC → SDD → AGENTS → TASKS),再從本檔最新一筆接手。
 
-## 目前狀態:T5 已合併進 dev,T7 審查修正 PR 待審
+## 目前狀態:T6 資料全量入庫完成、PR 準備中,下一棒 T8(Cue)
+
+### T6(Instinct)— 景點全量入庫(2026-11-12)
+
+- 從最新 dev 開 `agent/t6-places-data`;交付 `scripts/fetch_nsa.py` + `data/places.json` 全量 139 筆,`python scripts/validate.py` 與 15 個單元測試全綠。
+- 資料來源:澎管處官網列表(12 頁、139 筆)與各景點詳情頁,欄位對映依 SDD.md §5;禮貌抓取(每頁 ≥ 1 秒、專案 UA、錯誤頁重試)。
+- **走 §7 流程新增 4 個 category 值**:官網出現 `宗教廟宇`(5 筆)、`觀光工廠`(2 筆)、`交通場站`(1 筆)、`國家風景區`(1 筆),已同步改三處:AGENTS.md §3、`scripts/validate.py` 允許清單、`assets/js/main.js` 的 `CATEGORY_ORDER`。
+- summary 為自動摘要(官網介紹第一句;過短者以「名稱+地區+介紹」補足 20 字),依 AGENTS.md §8 第 4 條待 T8 人工改寫;tags 全留空待 T8 補。
+- 不抓圖、不入庫易變資訊(依 T3 定案);重抓時以 `nsa_id` 合併、保留人工改寫欄位。
+
+### 給 T8(Cue)的交接重點
+
+1. 抽審 `summary`(139 筆皆為自動摘要,未人工改寫)並補 `tags`(0–5 個、2–8 字)。
+2. 校正 `category` 是否合理(新增的四類:宗教廟宇/觀光工廠/交通場站/國家風景區);要調整值請照 AGENTS.md §7 改三處。
+3. 8 筆 W8 精選備援資料可直接依 §4 SOP 編進 `data/places.json`(以 `nsa_id` 對應既有筆時保留人工改寫欄位)。
+
 
 ### T7 文件修正(Instinct)— PR 待審(2026-11-12)
 

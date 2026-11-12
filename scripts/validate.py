@@ -11,7 +11,8 @@ from urllib.parse import urlsplit
 
 # 與 AGENTS.md §3 同步。地區順序亦為 V12 排序順序。
 AREAS = ("馬公市", "湖西鄉", "白沙鄉", "西嶼鄉", "望安鄉", "七美鄉")
-CATEGORIES = ("自然風景", "遊憩", "文化", "文化資產", "生態", "藝術")
+CATEGORIES = ("自然風景", "遊憩", "文化", "文化資產", "生態", "藝術",
+              "宗教廟宇", "觀光工廠", "交通場站", "國家風景區")
 REQUIRED_FIELDS = frozenset({
     "slug", "name", "area", "category", "summary", "sources", "updated_at",
 })

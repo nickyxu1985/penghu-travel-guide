@@ -11,7 +11,7 @@
 
   var DATA_URL = 'data/places.json';
   var AREA_ORDER = ['馬公市', '湖西鄉', '白沙鄉', '西嶼鄉', '望安鄉', '七美鄉'];
-  var CATEGORY_ORDER = ['自然風景', '遊憩', '文化', '文化資產', '生態', '藝術'];
+  var CATEGORY_ORDER = ['自然風景', '遊憩', '文化', '文化資產', '生態', '藝術', '宗教廟宇', '觀光工廠', '交通場站', '國家風景區'];
 
   var state = { area: '', category: '' };
   var allPlaces = [];
