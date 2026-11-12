@@ -40,9 +40,11 @@
 
   function renderSources(sources) {
     if (!Array.isArray(sources)) { return ''; }
-    var items = sources.filter(isSafeUrl).map(function (url, i) {
+    var items = [];
+    sources.forEach(function (url, i) {
+      if (!isSafeUrl(url)) { return; }
       var label = i === 0 ? '澎管處官網介紹' : '參考資料 ' + i;
-      return '<li><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a></li>';
+      items.push('<li><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a></li>');
     });
     return items.length ? '<ul class="place-source">' + items.join('') + '</ul>' : '';
   }

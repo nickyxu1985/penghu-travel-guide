@@ -58,12 +58,12 @@ penghu-travel-guide/
 │   ├── js/main.js       # 首頁渲染與篩選
 │   ├── js/place.js      # 詳情頁渲染
 │   ├── js/ai.js         # 預留 AI 接口(本期不實作)
-│   └── img/             # 自有或已確認授權的圖片,檔名 = <slug>.jpg / .webp
+│   └── img/             # 自有或已確認授權的圖片(T6 待建),檔名 = <slug>.<ext>(jpg / jpeg / png / webp)
 ├── data/
 │   └── places.json      # 唯一事實來源:所有景點資料
 ├── scripts/
 │   ├── validate.py      # 資料驗證(CI 與本地共用)
-│   └── fetch_nsa.py     # 從澎管處官網產生/更新 places.json
+│   └── fetch_nsa.py     # 從澎管處官網產生/更新 places.json(T6 待建)
 └── .github/workflows/
     └── validate.yml     # CI:只跑 validate,不部署
 ```
@@ -90,12 +90,12 @@ penghu-travel-guide/
 | `summary` | string | ✅ | 一句話重點,20–100 字,用自己的話改寫,不可整段複製官網 |
 | `description` | string | ⬜ | 詳細介紹,≤ 600 字;段落用 `\n\n` 分隔 |
 | `address` | string | ⬜ | 官網地址,原樣照抄 |
-| `tags` | string[] | ⬜ | 0–5 個,每個 2–8 字,例:`["退潮限定", "石滬"]` |
+| `tags` | string[] | ⬜ | 0–5 個、不重複,每個 2–8 字,例:`["退潮限定", "石滬"]` |
 | `image` | string | ⬜ | 只能是 `assets/img/<slug>.<ext>` 相對路徑;不可外連 |
 | `image_credit` | string | 有 `image` 時必填 | 攝影者 / 授權來源 |
 | `sources` | string[] | ✅ | ≥ 1 個 `https://` URL;**第一個必須是澎管處官網該景點頁** |
 | `nsa_id` | string | ⬜ | 官網詳情頁網址中的 `Cond` GUID,`fetch_nsa.py` 更新時用來對應同一筆 |
-| `updated_at` | string | ✅ | `YYYY-MM-DD`,資料整理日(官網頁面沒有更新日期,一律填你整理資料的那天) |
+| `updated_at` | string | ✅ | `YYYY-MM-DD`,不晚於今天;資料整理日(官網頁面沒有更新日期,一律填你整理資料的那天) |
 
 不在上表的欄位一律不准出現(validator 會擋)。要加欄位,依第 7 節的延伸流程。
 
@@ -136,7 +136,8 @@ penghu-travel-guide/
    **不可以雙擊 index.html 用 `file://` 開**:瀏覽器會擋 fetch,頁面會是空的。
 7. 依下方「完成定義」逐條自查。
 8. commit 訊息:`data: 新增 <name>(<slug>)`;push 後開 PR 進 `dev`,PR 說明貼上完成定義清單並打勾。
-9. 在 handoff.md 最上面記一筆,在 Slack 任務串回報並 @ 下一棒。
+9. 里程碑由 Nicky 把 `dev` 合併到 `main` 後,開 GitHub Pages 網址確認新卡片出現、詳情頁正常;異常就開 issue 追蹤。
+10. 在 handoff.md 最上面記一筆,在 Slack 任務串回報並 @ 下一棒。
 
 **完成定義(全部打勾才算完成):**
 
@@ -190,10 +191,12 @@ penghu-travel-guide/
 
 | 規則(本檔位置) | 頁面上看得到的行為 |
 |------------------|--------------------|
-| `area` 只有 6 個值(§3) | 首頁「地區」篩選列固定 6 顆鈕 + 「全部」 |
+| `area` 只有 6 個值(§3) | 地區篩選列只出現資料裡有的鄉市(最多 6 顆)+ 「全部」 |
 | `category` 只有 6 個值(§3) | 首頁「類型」篩選列的鈕都來自這 6 個值,沒有其他 |
 | `slug` 唯一且不改(§3) | 每個景點有固定網址 `place.html?slug=<slug>`,可分享、不失效 |
 | `summary` 20–100 字(§3) | 首頁卡片高度整齊,摘要不會被截斷成半句 |
+| `description` ≤ 600 字(§3) | 詳情頁介紹維持一頁讀得完的長度,不會洗成長文 |
+| `tags` 0–5 個、每個 2–8 字(§3) | 卡片與詳情頁的標籤最多 5 個,不會排滿一整列 |
 | `sources[0]` 必為官網頁(§3) | 每個詳情頁底部都有「澎管處官網介紹」連結 |
 | `updated_at` 必填(§3) | 每個詳情頁顯示「資料整理日」 |
 | `image` 只能用 repo 內檔案、須附 `image_credit`(§3、§8) | 有圖的景點,圖下方一定有攝影 / 授權說明;沒有外連圖片 |
@@ -207,11 +210,12 @@ penghu-travel-guide/
 
 **新增景點:** 第 4 節 SOP,只改 `data/places.json`。
 
-**新增一個 `category` 或 `area` 值:** 改兩處,同一個 PR:
+**新增一個 `category` 或 `area` 值:** 改三處,同一個 PR:
 1. 本檔第 3 節的允許值清單;
-2. `scripts/validate.py` 的允許清單。
+2. `scripts/validate.py` 的允許清單;
+3. `assets/js/main.js` 的 `AREA_ORDER` / `CATEGORY_ORDER` 排序陣列。
 
-前端篩選鈕依資料自動產生,**不用改 JS**。官網出現新的景點類型時,`fetch_nsa.py` 會停下來報錯,提醒你走這個流程,不會默默塞進奇怪的值。
+前端篩選鈕依資料自動產生,但鈕的順序由 `main.js` 的排序陣列決定:新值不加進陣列會排到最後面,所以要同步改。官網出現新的景點類型時,`fetch_nsa.py`(T6 待建)會停下來報錯,提醒你走這個流程,不會默默塞進奇怪的值。
 
 **新增欄位:** 改三處,同一個 PR:本檔第 3 節欄位表 → `scripts/validate.py` → 要顯示的話再改 `assets/js/place.js`(或 `main.js`)。先改規則、再改程式。
 
