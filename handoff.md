@@ -2,7 +2,18 @@
 
 每個任務完成或進入新階段時更新本檔。下一棒 agent 進場先讀文件鏈(SPEC → SDD → AGENTS → TASKS),再從本檔最新一筆接手。
 
-## 目前狀態:T3/T4 已合併進 dev,T5 實作完成待 PR
+## 目前狀態:T5 已合併進 dev,T7 審查修正 PR 待審
+
+### T7 文件修正(Instinct)— PR 待審(2026-11-12)
+
+- 對應 Muse T7 審查的 issue #3、#4、#5,分支 `agent/docs-fixes`,PR 進 `dev`,不 merge。
+- #3:§4 SOP 加一步「合併到 main 後開 GitHub Pages 網址確認新卡片出現」;§2 目錄樹把 `fetch_nsa.py`、`assets/img/` 標為(T6 待建);§7 的 `fetch_nsa.py` 引用同步標註。
+- #4:§6 地區篩選列改為「只出現資料裡有的鄉市(最多 6 顆)+ 全部」,對齊 `main.js` 實作。
+- #5 N2:§3 補 `tags` 不重複、`updated_at` 不晚於今天;§2 圖片命名統一為 `<slug>.<ext>`(jpg / jpeg / png / webp)。
+- #5 N4(順手):§6 補 `description` ≤ 600 字、`tags` 0–5 個兩列對應行為。
+- #5 N5:§7 新增 `category` / `area` 值改為「改三處」,補上 `main.js` 的 `AREA_ORDER` / `CATEGORY_ORDER` 排序陣列要同步。
+- N1(順手):`place.html` 註解 `?id=` 改 `?slug=`;N6(順手):`place.js` 來源標籤改用原始 index,不再用過濾後序號。
+- N3、N7 依 Nicky 指示不動。修改後 `python scripts/validate.py` 零錯誤(exit 0)。
 
 ### T5(Instinct) - 實作完成,待 PR(2026-11-12)
 
