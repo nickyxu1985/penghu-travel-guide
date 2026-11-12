@@ -20,5 +20,6 @@
 | 2026-11-12 15:01 | T5 | 進行中:validate.py V1–V13 + CI,從最新 dev 開工 | 進行中 |
 | 2026-11-12 15:12 | T5 | PR #6 已合併進 dev,validate.py + CI 上線 | https://github.com/nickyxu1985/penghu-travel-guide/pull/6 |
 | 2026-11-12 15:18 | T7 | 文件修正 PR #7 已合併進 dev(issue #3/#4/#5 已修並關閉) | https://github.com/nickyxu1985/penghu-travel-guide/pull/7 |
-| 2026-11-12 15:45 | T6 | 進行中:fetch_nsa.py 全量抓取 139 筆,本地驗證通過,PR 準備中 | 進行中 |
+| 2026-11-12 15:45 | T6 | fetch_nsa.py 全量抓取 139 筆,本地驗證全綠 | 進行中 |
+| 2026-11-12 15:50 | T6 | PR #8 已開進 dev(景點全量 139 筆) | https://github.com/nickyxu1985/penghu-travel-guide/pull/8 |
 
