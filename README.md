@@ -9,7 +9,7 @@
 
 澎湖旅遊景點介紹站,完整收錄[澎湖國家風景區管理處官網](https://www.penghu-nsa.gov.tw/)的 **139 個景點、389 張官方照片**,純靜態網頁,部署於 GitHub Pages。
 
-這個 repo 同時是「文件驅動 multi-agent 協作」的實驗場:1 位人類(Nicky)+ 5 個 AI agent(Instinct、Hark、Muse、Cue、Vibe)只靠 repo 內的文件鏈領任務、開發、審查、交接,過程中不由人類口頭協調。任何人或 AI 進場,照順序讀完文件就知道該做什麼、做到什麼程度算完成。
+這個 repo 同時是「文件驅動 multi-agent 協作」的實驗場:1 位人類(Nicky)+ 4 個 AI agent(Instinct、Cue、Hark、Muse)只靠 repo 內的文件鏈領任務、開發、審查、交接,過程中不由人類口頭協調。任何人或 AI 進場,照順序讀完文件就知道該做什麼、做到什麼程度算完成。
 
 ## 網站畫面
 
@@ -58,7 +58,7 @@ flowchart TD
     J --> K[下一棒從 handoff 接手<br/>里程碑時 dev → main]
 ```
 
-三條驗收標準(寫在 [SPEC.md](SPEC.md),全程由 T0 觀察員與 merge 紀錄佐證):
+三條驗收標準(寫在 [SPEC.md](SPEC.md)):
 
 1. **無人放牧**:agent 只靠文件鏈領任務,Nicky 不口頭協調
 2. **零撞車零漏工**:TASKS.md 認領制,先 commit 先得
@@ -87,7 +87,6 @@ flowchart LR
 
 | 任務 | 負責 | 內容 | 成果 |
 | --- | --- | --- | --- |
-| T0 | Vibe | 進度觀察員,只讀文件、每日回報 | 全程進行中 |
 | T1 | Nicky | 開 public repo、啟用 GitHub Pages | 完成 |
 | T2 | Instinct | 專案骨架:頁面、JS、文件鏈初版 | [PR #1](https://github.com/nickyxu1985/penghu-travel-guide/pull/1) |
 | T3 / T4 | Hark | AGENTS.md 七節 + SDD.md schema;style.css 視覺實作 | [PR #2](https://github.com/nickyxu1985/penghu-travel-guide/pull/2) |
@@ -129,7 +128,7 @@ Multi-agent 協作最大的風險是黑箱:AI 產出了東西,但沒有人知道
 | 繳交內容 5:規則如何幫助 AI 新增頁面/內容 | 新增一筆景點 = 只改 `data/places.json`,欄位、命名、圖片規則全在 AGENTS.md §2–§6;schema 由 validate.py 強制執行,AI 產出的資料不合規會在本地與 CI 被擋下 |
 | 7~8 分:`AGENTS.md` 清楚描述專案目的、結構與開發規則,網頁可正常瀏覽並上傳 GitHub | 規則文件共 6 份、互相引用不重複;網站已在 GitHub Pages 上線,139 個景點頁皆可瀏覽 |
 | 9~10 分:專案規則清楚、具體 | 規則不是描述性文字,而是可執行的檢查:欄位允許值、slug 拼音規則、圖片檔名規則都由 `scripts/validate.py`(V10)+ 15 個單元測試具體驗證 |
-| 9~10 分:AI 可以依照文件內容繼續新增或修改頁面 | 已實證:5 個 AI agent 全程只靠文件鏈協作,完成 11 項任務、10 個 PR;T8(Cue)逐筆核對 139 筆資料時只依 SDD.md 的欄位對映規則判斷 |
+| 9~10 分:AI 可以依照文件內容繼續新增或修改頁面 | 已實證:4 個 AI agent 全程只靠文件鏈協作,完成 11 項任務、10 個 PR;T8(Cue)逐筆核對 139 筆資料時只依 SDD.md 的欄位對映規則判斷 |
 | 9~10 分:網頁內容與專案規則有良好對應 | 網站每個畫面都可回指到規則:卡片篩選順序 = AGENTS.md §3 地區/類型順序;詳情頁欄位順序 = SDD.md §3.2;照片署名格式 = AGENTS.md §3 `credit` 規範;不符規則的資料進不了網站(CI) |
 | 9~10 分:具有重複使用與延伸的可能性 | 文件鏈 + validator + fetcher 可直接用於下一批資料;`assets/js/ai.js` 預留 AI 問答接口,SPEC.md 列出 plan.html 行程安排、TDX 即時資料等延伸方向 |
 
