@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>澎湖旅遊指南 | 景點列表</title>
+  <meta name="description" content="澎湖旅遊景點介紹站,資料來源:澎湖國家風景區管理處。">
+  <!-- T4(Hark)補上視覺實作:assets/css/style.css 目前尚未存在,先 link 占位 -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>澎湖旅遊指南</h1>
+    <p class="site-subtitle">澎湖國家風景區景點介紹</p>
+  </header>
+
+  <main>
+    <section id="place-list" class="place-list" aria-live="polite">
+      <!-- 景點卡片由 assets/js/main.js 動態渲染 -->
+      <noscript>本站需要啟用 JavaScript 才能瀏覽景點列表。</noscript>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>資料來源:<a href="https://www.penghu-nsa.gov.tw/" target="_blank" rel="noopener">澎湖國家風景區管理處</a></p>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
