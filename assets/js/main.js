@@ -1,22 +1,20 @@
 /**
- * main.js — 首頁景點列表邏輯
+ * main.js — 首頁景點列表 + 地區/類型篩選
  *
- * 從 data/places.json 純前端 fetch 景點資料並渲染卡片列表。
- * 資料為空陣列、檔案不存在或格式異常時,顯示友善空態,不拋錯。
- *
- * 欄位對映(暫行,正式 schema 以 SDD.md 為準,T3 產出):
- *   id       景點唯一代碼(place.html?id= 使用)
- *   name     景點名稱
- *   category 分類
- *   summary  摘要
- *   image    代表圖 URL(可空)
- *   address  地址(可空)
+ * 資料:data/places.json(頂層陣列,欄位定義見 AGENTS.md §3,渲染規則見 SDD.md §3.1)。
+ * 資料為空、檔案不存在或格式異常時,顯示友善空態,不拋錯。
+ * 篩選鈕依資料自動產生:新增 area / category 值時不用改這支檔案(AGENTS.md §7)。
  */
 
 (function () {
   'use strict';
 
   var DATA_URL = 'data/places.json';
+  var AREA_ORDER = ['馬公市', '湖西鄉', '白沙鄉', '西嶼鄉', '望安鄉', '七美鄉'];
+  var CATEGORY_ORDER = ['自然風景', '遊憩', '文化', '文化資產', '生態', '藝術'];
+
+  var state = { area: '', category: '' };
+  var allPlaces = [];
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
@@ -27,7 +25,6 @@
       .replace(/'/g, '&#39;');
   }
 
-  /** 友善狀態訊息:空態、載入失敗、查無資料共用 */
   function renderStatus(container, title, hint) {
     container.innerHTML =
       '<div class="empty-state">' +
@@ -36,61 +33,146 @@
       '</div>';
   }
 
+  /** 依偏好順序排列,不在清單內的值排最後(依字典序) */
+  function orderedValues(places, key, preferred) {
+    var seen = {};
+    places.forEach(function (p) {
+      if (p && p[key]) { seen[p[key]] = true; }
+    });
+    var values = Object.keys(seen);
+    return values.sort(function (a, b) {
+      var ia = preferred.indexOf(a);
+      var ib = preferred.indexOf(b);
+      if (ia === -1) { ia = preferred.length; }
+      if (ib === -1) { ib = preferred.length; }
+      return ia - ib || a.localeCompare(b, 'zh-Hant');
+    });
+  }
+
   function renderCard(place) {
-    var id = encodeURIComponent(place.id == null ? '' : place.id);
     var card = document.createElement('a');
     card.className = 'place-card';
-    card.href = 'place.html?id=' + id;
+    card.href = 'place.html?slug=' + encodeURIComponent(place.slug || '');
 
-    var imgHtml = place.image
-      ? '<img class="place-card-image" src="' + escapeHtml(place.image) + '" alt="' + escapeHtml(place.name) + '">'
+    var meta = [];
+    if (place.category) { meta.push('<strong>' + escapeHtml(place.category) + '</strong>'); }
+    if (place.area) { meta.push(escapeHtml(place.area)); }
+
+    var tags = Array.isArray(place.tags) && place.tags.length
+      ? '<ul class="place-card-tags">' + place.tags.map(function (t) {
+          return '<li class="tag">' + escapeHtml(t) + '</li>';
+        }).join('') + '</ul>'
+      : '';
+
+    var img = place.image
+      ? '<img class="place-card-image" src="' + escapeHtml(place.image) + '" alt="' + escapeHtml(place.name) + '" loading="lazy">'
       : '';
 
     card.innerHTML =
-      imgHtml +
+      img +
       '<div class="place-card-body">' +
+      (meta.length ? '<p class="place-card-meta">' + meta.join(' · ') + '</p>' : '') +
       '<h2 class="place-card-name">' + escapeHtml(place.name || '未命名景點') + '</h2>' +
-      (place.category ? '<p class="place-card-category">' + escapeHtml(place.category) + '</p>' : '') +
       (place.summary ? '<p class="place-card-summary">' + escapeHtml(place.summary) + '</p>' : '') +
-      (place.address ? '<p class="place-card-address">' + escapeHtml(place.address) + '</p>' : '') +
+      tags +
       '</div>';
     return card;
   }
 
-  function renderList(container, places) {
+  function matches(place) {
+    return (!state.area || place.area === state.area) &&
+      (!state.category || place.category === state.category);
+  }
+
+  function syncUrl() {
+    var params = new URLSearchParams();
+    if (state.area) { params.set('area', state.area); }
+    if (state.category) { params.set('category', state.category); }
+    var query = params.toString();
+    history.replaceState(null, '', query ? '?' + query : window.location.pathname);
+  }
+
+  function renderList() {
+    var container = document.getElementById('place-list');
+    var count = document.getElementById('result-count');
+    var shown = allPlaces.filter(matches);
+
+    if (count) { count.textContent = '共 ' + shown.length + ' 個景點'; }
+
+    if (shown.length === 0) {
+      renderStatus(container, '這個條件下還沒有景點。', '換個地區或類型看看。');
+      return;
+    }
     container.innerHTML = '';
-    places.forEach(function (place) {
+    shown.forEach(function (place) {
       container.appendChild(renderCard(place));
     });
   }
 
-  function loadPlaces() {
-    return fetch(DATA_URL, { cache: 'no-store' }).then(function (res) {
-      if (!res.ok) {
-        throw new Error('HTTP ' + res.status);
-      }
-      return res.json();
+  function renderFilterGroup(label, key, values) {
+    var group = document.createElement('div');
+    group.className = 'filter-group';
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-label', label);
+
+    var html = '<span class="filter-label">' + escapeHtml(label) + '</span>';
+    [''].concat(values).forEach(function (value) {
+      var active = state[key] === value;
+      html += '<button type="button" class="filter-chip' + (active ? ' is-active' : '') +
+        '" data-key="' + key + '" data-value="' + escapeHtml(value) +
+        '" aria-pressed="' + active + '">' + escapeHtml(value || '全部') + '</button>';
     });
+    group.innerHTML = html;
+    return group;
+  }
+
+  function renderFilters() {
+    var bar = document.getElementById('filter-bar');
+    if (!bar) { return; }
+    bar.innerHTML = '';
+    bar.appendChild(renderFilterGroup('地區', 'area', orderedValues(allPlaces, 'area', AREA_ORDER)));
+    bar.appendChild(renderFilterGroup('類型', 'category', orderedValues(allPlaces, 'category', CATEGORY_ORDER)));
+    bar.hidden = false;
+  }
+
+  function onFilterClick(event) {
+    var chip = event.target.closest('.filter-chip');
+    if (!chip) { return; }
+    state[chip.getAttribute('data-key')] = chip.getAttribute('data-value') || '';
+    syncUrl();
+    renderFilters();
+    renderList();
+  }
+
+  function readUrlState() {
+    var params = new URLSearchParams(window.location.search);
+    state.area = params.get('area') || '';
+    state.category = params.get('category') || '';
   }
 
   function init() {
     var container = document.getElementById('place-list');
-    if (!container) {
-      return;
-    }
+    if (!container) { return; }
     renderStatus(container, '景點資料載入中…');
 
-    loadPlaces()
+    fetch(DATA_URL, { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        return res.json();
+      })
       .then(function (data) {
-        var places = Array.isArray(data) ? data : (data && Array.isArray(data.places) ? data.places : []);
-        if (places.length === 0) {
+        allPlaces = Array.isArray(data) ? data.filter(function (p) { return p && p.slug; }) : [];
+        if (allPlaces.length === 0) {
           renderStatus(container, '景點資料整理中,敬請期待。', '本站持續收錄澎湖景點,請稍後再回來看看。');
           return;
         }
-        renderList(container, places);
+        readUrlState();
+        renderFilters();
+        renderList();
+        var bar = document.getElementById('filter-bar');
+        if (bar) { bar.addEventListener('click', onFilterClick); }
       })
       .catch(function () {
-        // 檔案不存在、JSON 格式錯誤、網路問題都落在這裡:顯示空態,不讓頁面報錯
         renderStatus(container, '景點資料整理中,敬請期待。', '暫時無法讀取景點資料,請稍後再試。');
       });
   }
