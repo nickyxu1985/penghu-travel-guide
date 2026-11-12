@@ -2,14 +2,22 @@
 
 每個任務完成或進入新階段時更新本檔。下一棒 agent 進場先讀文件鏈(SPEC → SDD → AGENTS → TASKS),再從本檔最新一筆接手。
 
-## 目前狀態:T6 資料全量入庫完成,PR #8 待審,下一棒 T8(Cue)
+## 目前狀態:T8 資料品質把關完成,PR 待建立,下一棒 T9(Cue 執行 / Muse 驗收)
+
+### T8(Cue)—資料品質把關(2026-11-12)
+
+- 逐筆核對 139 筆澎管處景點詳情頁,改寫全部 139 筆 `summary` 並補齊 139 筆 `tags`;只改 `data/places.json` 的這兩欄,`slug`、`category`、`description`、`sources`、`updated_at` 等欄位未動。`python scripts/validate.py` 通過(139 筆),15 個單元測試全通過。
+- 139 筆 `category` 全數保留 T6 從官網列表擷取的值。SDD.md §5 指明類別來自列表卡片,而多數詳情頁沒有類別欄位；因此不依據古蹟身分推改類別。例:「澎湖醫院&關稅局馬公支關」詳情頁記載縣(市)定古蹟,但不足以證明官網列表分類應由「文化」改為「文化資產」；如需更動應先直接核對列表分類。[官方詳情頁](https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=d9268187-e0f5-4c70-adb0-92924167383a&Language=1028)
+- 兩筆官方頁面有互相矛盾的資訊,摘要已避開不確定事項:「北海遊客中心」頁同時顯示開放中與 2023/10 起重建暫停、服務移往後寮；摘要不寫開放狀態、票價或電話,提醒出發前查官網。[官方詳情頁](https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=55ca54e1-0eb1-4133-a315-8b16f4aad381&Language=1028)；「西嶼彈藥本庫」正文稱縣定古蹟,資訊欄卻標示國定,摘要不寫古蹟分級。[官方詳情頁](https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=a421ff27-a695-4472-9e6b-eacf24bd8a01&Language=1028)
+- W8 精選 8 筆景點名稱全已存在於 139 筆資料中,沒有重複新增；核心描述依官網改寫,未採用官網未佐證的附加說法(如天后宮 1604 年與中央老街鄰近、吉貝白沙/特定水上活動、雙心石滬 700 年等)。未將原始 W8 notebook 或個資複製進 repo。
+- 工作分支:`agent/t8-place-quality`;PR 將開至 `dev`,不直接合併或部署。
 
 ### T6(Instinct)— 景點全量入庫(2026-11-12)
 
 - 從最新 dev 開 `agent/t6-places-data`;交付 `scripts/fetch_nsa.py` + `data/places.json` 全量 139 筆,`python scripts/validate.py` 與 15 個單元測試全綠。
 - 資料來源:澎管處官網列表(12 頁、139 筆)與各景點詳情頁,欄位對映依 SDD.md §5;禮貌抓取(每頁 ≥ 1 秒、專案 UA、錯誤頁重試)。
 - **走 §7 流程新增 4 個 category 值**:官網出現 `宗教廟宇`(5 筆)、`觀光工廠`(2 筆)、`交通場站`(1 筆)、`國家風景區`(1 筆),已同步改三處:AGENTS.md §3、`scripts/validate.py` 允許清單、`assets/js/main.js` 的 `CATEGORY_ORDER`。
-- summary 為自動摘要(官網介紹第一句;過短者以「名稱+地區+介紹」補足 20 字),依 AGENTS.md §8 第 4 條待 T8 人工改寫;tags 全留空待 T8 補。
+- 當時的 `summary` 為自動摘要(官網介紹第一句;過短者以「名稱+地區+介紹」補足 20 字),`tags` 全留空;已由上方 T8 全量改寫與補齊。
 - 不抓圖、不入庫易變資訊(依 T3 定案);重抓時以 `nsa_id` 合併、保留人工改寫欄位。
 
 ### 給 T8(Cue)的交接重點
