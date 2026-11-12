@@ -72,7 +72,7 @@ penghu-travel-guide/
 
 - **新增景點 = 只改 `data/places.json`。** 不新增 HTML、不複製頁面、不改 JS。
 - `slug`:小寫英數 + 連字號(kebab-case),用景點名稱的漢語拼音、不帶聲調,例:`雙心石滬 → shuang-xin-shi-hu`。全檔唯一;撞名時加地區拼音,例:`shan-shui-sha-tan-ma-gong`。
-- 圖片檔名 = `<slug>.<副檔名>`,放 `assets/img/`。
+- 圖片檔名 = `<slug>-<n>.<副檔名>`(n 由 1 起連號、副檔名小寫),放 `assets/img/`。
 - 文件檔名全大寫(`AGENTS.md`),程式與資料檔小寫加底線或連字號。
 
 ---
@@ -91,8 +91,7 @@ penghu-travel-guide/
 | `description` | string | ⬜ | 詳細介紹,≤ 600 字;段落用 `\n\n` 分隔 |
 | `address` | string | ⬜ | 官網地址,原樣照抄 |
 | `tags` | string[] | ⬜ | 0–5 個、不重複,每個 2–8 字,例:`["退潮限定", "石滬"]` |
-| `image` | string | ⬜ | 只能是 `assets/img/<slug>.<ext>` 相對路徑;不可外連 |
-| `image_credit` | string | 有 `image` 時必填 | 攝影者 / 授權來源 |
+| `images` | object[] | ⬜ | 景點照片,每張為 `{"src", "credit"}`。`src` 只能是 `assets/img/<slug>-<n>.<ext>` 相對路徑(n 由 1 起連號,副檔名 jpg / jpeg / png / webp,不可外連);`credit` 必填,格式「署名(出處頁 URL)」,每張都可回溯出處頁。首頁卡片用第 1 張當主圖 |
 | `sources` | string[] | ✅ | ≥ 1 個 `https://` URL;**第一個必須是澎管處官網該景點頁** |
 | `nsa_id` | string | ⬜ | 官網詳情頁網址中的 `Cond` GUID,`fetch_nsa.py` 更新時用來對應同一筆 |
 | `updated_at` | string | ✅ | `YYYY-MM-DD`,不晚於今天;資料整理日(官網頁面沒有更新日期,一律填你整理資料的那天) |
@@ -111,6 +110,12 @@ penghu-travel-guide/
   "description": "石滬是先民用玄武岩和珊瑚礁砌成的捕魚陷阱,漲潮時魚群游進滬內,退潮後就困在裡面。\n\n七美的雙心石滬因為造型浪漫,成了澎湖觀光的代表畫面。",
   "address": "澎湖縣七美鄉雙心石滬",
   "tags": ["退潮限定", "石滬", "離島"],
+  "images": [
+    {
+      "src": "assets/img/shuang-xin-shi-hu-1.jpg",
+      "credit": "交通部觀光署澎湖國家風景區管理處官網(https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=a98c092b-65f5-4b7e-bbb3-de16bf9be2cf&Language=1028)"
+    }
+  ],
   "sources": [
     "https://www.penghu-nsa.gov.tw/TravelInformationSceneryDetailC001200.aspx?Cond=a98c092b-65f5-4b7e-bbb3-de16bf9be2cf&Language=1028"
   ],
@@ -181,7 +186,7 @@ penghu-travel-guide/
 - 所有可點元素要有看得見的鍵盤焦點框(天人菊色)。
 
 **HTML class 命名(CSS 與 JS 共用,改名要兩邊一起改):**
-`site-header`、`site-subtitle`、`site-nav`、`site-footer`、`filter-bar`、`filter-group`、`filter-label`、`filter-chip`(選中加 `is-active`)、`result-count`、`place-list`、`place-card`(`-meta / -name / -summary / -tags`)、`place-detail`(`place-figure / place-image / place-image-credit / place-meta / place-name / place-summary / place-description / place-address / place-tags / place-notice / place-source / place-updated`)、`tag`、`empty-state`(`-title / -hint`)。
+`site-header`、`site-subtitle`、`site-nav`、`site-footer`、`filter-bar`、`filter-group`、`filter-label`、`filter-chip`(選中加 `is-active`)、`result-count`、`place-list`、`place-card`(`-meta / -name / -summary / -tags`)、`place-detail`(`place-figure / place-image / place-image-credit / place-meta / place-name / place-summary / place-description / place-address / place-tags / place-notice / place-source / place-updated`)、`tag`、多圖輪播 `place-gallery`(`-stage / -nav / -prev / -next / -counter`)、`empty-state`(`-title / -hint`)。
 
 ---
 
@@ -199,7 +204,7 @@ penghu-travel-guide/
 | `tags` 0–5 個、每個 2–8 字(§3) | 卡片與詳情頁的標籤最多 5 個,不會排滿一整列 |
 | `sources[0]` 必為官網頁(§3) | 每個詳情頁底部都有「澎管處官網介紹」連結 |
 | `updated_at` 必填(§3) | 每個詳情頁顯示「資料整理日」 |
-| `image` 只能用 repo 內檔案、須附 `image_credit`(§3、§8) | 有圖的景點,圖下方一定有攝影 / 授權說明;沒有外連圖片 |
+| `images` 只能用 repo 內檔案、每張須附 `credit`(§3、§8) | 有圖的景點,詳情頁可翻看多張,圖下方一定有署名與出處連結;沒有外連圖片;首頁卡片顯示第 1 張 |
 | 易變資訊不寫死(§8) | 詳情頁不顯示開放時間、票價、船班,改提示「出發前請至官網確認」 |
 | 新增景點只改 places.json(§4) | 所有景點卡片與詳情頁長相一致,沒有一頁特別不一樣 |
 | 色票只用 CSS 變數(§5) | 全站顏色一致;換主題色只要改 `style.css` 頂部一處 |
@@ -234,7 +239,7 @@ penghu-travel-guide/
 3. **事實必附來源:** 每筆至少一個 `sources`,第一個是澎管處官網。查不到來源的內容不寫。
 4. **不整段複製官網文字:** `summary` 必須自己改寫;`description` 可以摘錄,但要精簡、改寫並保留來源。
 5. **不放個資:** 學號、姓名、帳號、截圖(含 base64 內嵌圖)一律不進 repo。
-6. **圖片:** 不外連官網圖片(hotlink),不放沒有確認授權的照片;有圖就要有 `image_credit`。
+6. **圖片:** 不外連官網圖片(hotlink),不放沒有確認授權的照片;有圖就要在每張的 `credit` 標明署名與出處頁 URL。
 7. **不改 `slug`、不刪別人的資料**;要下架景點,開 issue 討論。
 8. **不直接 push `dev` / `main`、不自己 merge、不 force push。**
 9. **不碰自己任務範圍以外的檔案**;不改 PROGRESS.md(Instinct 專屬)。
