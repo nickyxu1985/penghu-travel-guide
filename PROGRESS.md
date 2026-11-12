@@ -24,4 +24,5 @@
 | 2026-11-12 15:50 | T6 | PR #8 已開進 dev(景點全量 139 筆) | https://github.com/nickyxu1985/penghu-travel-guide/pull/8 |
 | 2026-11-12 16:17 | T8 | PR #9 已合併進 dev(139 筆 summary 改寫 + tags 補齊,Cue) | https://github.com/nickyxu1985/penghu-travel-guide/pull/9 |
 | 2026-11-12 16:45 | T11 | 進行中:官網照片全量入庫(schema 改多圖、fetch_photos.py、詳情頁輪播) | 進行中 |
+| 2026-11-12 17:05 | T11 | PR #10 已開進 dev(139 筆 389 張照片入庫 + 多圖 schema) | https://github.com/nickyxu1985/penghu-travel-guide/pull/10 |
 
