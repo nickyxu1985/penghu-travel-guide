@@ -2,7 +2,19 @@
 
 每個任務完成或進入新階段時更新本檔。下一棒 agent 進場先讀文件鏈(SPEC → SDD → AGENTS → TASKS),再從本檔最新一筆接手。
 
-## 目前狀態:T3/T4 PR 待審(T7 Muse),T5 可開工
+## 目前狀態:T3/T4 已合併進 dev,T5 實作完成待 PR
+
+### T5(Instinct) - 實作完成,待 PR(2026-11-12)
+
+- 從 PR #2 merge 後的 dev(`502ed62`)開 `agent/t5-validator`,不動 main、不自行 merge。
+- 交付:`scripts/validate.py`、`scripts/test_validate.py`、`.github/workflows/validate.yml`;同步本任務狀態與 PROGRESS.md。
+- validator 純標準庫,覆蓋 SDD.md §4 V1–V13;錯誤帶筆數、slug、欄位與 V 編號,失敗 exit 1。
+- `python scripts/validate.py [path]` 可帶測試檔,預設從 repo 位置找 `data/places.json`,不受工作目錄影響。
+- optional image/image_credit 按 AGENTS.md §3 保留驗證,不抓圖也不新增圖片資料。
+- CI 在 push / pull_request 到 dev、main 時跑單元測試與資料驗證,不部署;日期檢查以 Asia/Taipei 時區執行。
+- 自測:15 個標準庫 unittest 全通過;暫放一筆 `slug=BAD_SLUG/category=美食` 到 places.json,出現 V4/V5 且 exit 1;已還原空陣列,驗證 exit 0。壞資料未 commit。
+- 給 T6:抓取腳本完成後先跑 validator,允許值常數需與 AGENTS.md §3 同步。空陣列目前允許通過,全量資料仍需 T6/T8 內容品質抽查。
+- PR/雲端 CI 狀態以 GitHub 即時結果為準;此筆只記錄本地測試。
 
 ### T3/T4(Hark)— 🔍 PR 待審(2026-11-12)
 

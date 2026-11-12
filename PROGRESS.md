@@ -15,3 +15,6 @@
 |------|------|------|----|
 | 2026-11-12 | T1 | repo 建立(main;dev 由 T2 補建),GitHub Pages 啟用 | — |
 | 2026-11-12 | T2 | 專案骨架開始,文件鏈初版建立 | 進行中 |
+| 2026-11-12 14:43 | T2 | PR #1 已合併進 dev,專案骨架完成 | https://github.com/nickyxu1985/penghu-travel-guide/pull/1 |
+| 2026-11-12 15:00 | T3/T4 | PR #2 已合併進 dev,規則/schema/樣式定案 | https://github.com/nickyxu1985/penghu-travel-guide/pull/2 |
+| 2026-11-12 15:01 | T5 | 進行中:validate.py V1–V13 + CI,從最新 dev 開工 | 進行中 |

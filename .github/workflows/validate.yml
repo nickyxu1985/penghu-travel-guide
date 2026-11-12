@@ -1,0 +1,25 @@
+name: Validate places data
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Taipei
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test validator rules
+        run: python -m unittest discover -s scripts -p 'test_validate.py' -v
+      - name: Validate places.json
+        run: python scripts/validate.py
