@@ -13,7 +13,6 @@
 
 | # | 負責人 | 內容 | 依賴 | 完成定義 | 狀態 |
 |---|--------|------|------|----------|------|
-| T0 | Vibe | 進度觀察員:只讀 TASKS.md + handoff.md,每日向 Nicky 報進度 | 無(全程) | 每日進度報告送達 Nicky;不修改任何檔案 | 進行中 |
 | T1 | Nicky | 開 public repo(main + dev)、GitHub Pages 發 main | 無 | repo 公開可見,Pages 已啟用 | ✅ 已完成 |
 | T2 | Instinct | 專案骨架 PR:index.html、place.html、assets/js(main/place/ai)、README、SPEC、TASKS、handoff、data/places.json 空陣列、.gitignore | T1 | PR 開出進 dev;空資料下首頁可瀏覽不報錯 | ✅ 已合併 dev(PR #1) |
 | T3 | Hark | AGENTS.md 七節 + 文件閱讀鏈;SDD.md(schema 欄位表 + fetch 欄位對映規則) | T2 | 兩份文件 PR 進 dev;閱讀鏈與 README/SPEC 一致;schema 覆蓋前端已用欄位 | ✅ 已合併 dev(PR #2) |
@@ -29,4 +28,4 @@
 ## 驗收方法論對應
 
 - T9 是 SPEC.md 驗收標準③(handoff 真的有用)的實地演練:Cue 只靠文件鏈完成一筆新增。
-- 驗收標準①②由全程觀察(T0)與 merge 紀錄佐證。
+- 驗收標準①②由 merge 紀錄佐證。
