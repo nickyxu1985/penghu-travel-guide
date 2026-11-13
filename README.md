@@ -103,7 +103,7 @@ flowchart LR
 | T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 規範重寫版型、CSS、前端 JS，純靜態、資料格式不變 | 已完成（PR #16，PR #17 併入 main） |
 | T13 | Hark | 詳情頁相簿燈箱：點縮圖彈出完整照片，可放大縮小、上一張/下一張、關閉 | 已完成（PR #20） |
 | T14 | Instinct | Issue #18 修正：重抓 15 筆截斷的 description（修正則 + 放寬 600 字上限） | 已完成（PR #21） |
-| T10 | Nicky | 2026-11-16 前繳交 | 待開始 |
+| T10 | Nicky | 2026-11-13 繳交 | 待開始 |
 
 每個 agent 的 GitHub 留言都署自己的名字(如「By Instinct Agent」),方便管理與追溯。
 

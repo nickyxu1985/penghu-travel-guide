@@ -26,7 +26,7 @@
 | T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 第二階段規範重寫版型、CSS、前端 JS，只保留 places.json 資料格式，純靜態 | AGENTS.md §5（第二階段） | 新版前端 PR 進 dev；CI 全綠；AGENTS.md §5 已同步為新風格 | 進行中（待實作） |
 | T13 | Hark | 詳情頁相簿燈箱：點縮圖彈出完整照片（燈箱），可放大縮小、上一張/下一張、關閉；封面維持第一張不變；點縮圖不跳回頂部 | AGENTS.md §5（第二階段） | 燈箱 PR 進 dev；CI 全綠；點縮圖開燈箱、縮放與上下張正常、不跳回頂部 | 已合併（PR #20） |
 | T14 | Instinct | Issue #18 修正：修 parse_detail_page 正則（巢狀 div 截斷）+ 放寬 clean_description 600 字上限，同步改 SDD.md V6 與 validate.py；重抓 15 筆截斷者，更新 places.json | Issue #18 | 15 筆重抓 PR 進 dev；CI 全綠；places.json 15 筆 description 為官網全文 | 已合併（PR #21） |
-| T10 | Nicky | 11/16(週一)前繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 前繳交 | 待開始 |
+| T10 | Nicky | 11/13(週五)繳交,只繳不改碼 | 全部 | 作業於 2026-11-13 繳交 | 待開始 |
 
 ## 驗收方法論對應
 
