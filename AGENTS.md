@@ -217,7 +217,33 @@ penghu-travel-guide/
 
 **異動檔案:** `index.html`、`place.html`、`assets/css/style.css`、`assets/js/main.js`、`assets/js/place.js`（`ai.js` 與資料未動）。
 
-**HTML class 命名:** 由實作方定義，CSS 與 JS 共用，改名要兩邊一起改；實作完成後須把 class 清單補回本節，否則後續維護無據可查。
+**HTML class 命名:** 由實作方定義，CSS 與 JS 共用，改名要兩邊一起改；清單如下（T12 實作）。
+
+| 區塊 | class | 產生者 |
+|------|-------|--------|
+| 頁面 | `page-home`、`page-place`（body） | HTML |
+| 浮動頂欄 | `topbar`、`topbar-inner`、`brand`、`brand-mark`、`topbar-links`、`topbar-link` | HTML |
+| 首頁封面 | `hero`、`hero-media`、`hero-img`、`hero-shade`、`hero-body`、`hero-kicker`、`hero-title`、`hero-lead`、`hero-credit` | HTML／main.js |
+| 搜尋 | `search`、`search-input`、`search-btn`、`visually-hidden` | HTML |
+| 即時統計 | `hero-stats`、`stat`、`stat-label`、`stat-value` | main.js |
+| 區塊標題 | `section`、`section-head`、`eyebrow`、`section-title` | HTML |
+| 地區磚 | `area-grid`、`area-tile`、`area-tile-img`、`area-tile-shade`、`area-tile-body`、`area-tile-name`、`area-tile-note`、`area-tile-count` | main.js |
+| 類型 chip 列 | `chip-bar`、`chip-row`、`chip-extras`、`chip`、`chip-area`、`chip-x`、`chip-clear`、`result-count` | main.js |
+| 景點卡片 | `card-grid`、`card`、`card-media`、`card-img`、`card-img-empty`、`card-badge`、`card-body`、`card-area`、`card-title`、`card-summary` | main.js／place.js |
+| 標籤 | `tag-list`、`tag` | main.js／place.js |
+| 詳情封面 | `cover`、`cover-img`、`cover-img-empty`、`cover-shade`、`cover-body`、`breadcrumb`、`cover-badge`、`cover-title`、`cover-credit` | place.js |
+| 詳情兩欄 | `detail`、`article`、`lede`、`prose`、`notice`、`notice-title`、`notice-text` | place.js |
+| 資訊卡 | `info-card`、`info-list`、`info-row`、`info-label`、`info-value`、`info-actions`、`info-updated` | place.js |
+| 相簿 | `gallery`、`block-title`、`block-count`、`thumb-row`、`thumb`、`thumb-img` | place.js |
+| 同地區推薦 | `related`（內含 `card-grid`／`card`） | place.js |
+| 按鈕 | `btn`、`btn-dark`、`btn-ghost` | place.js |
+| 空態 | `empty-state`、`empty-state-page`、`empty-state-title`、`empty-state-hint` | main.js／place.js |
+| 頁尾 | `site-footer`、`footer-inner`、`footer-brand`、`footer-text` | HTML |
+| 狀態 | `is-active`（選中的地區磚、chip、縮圖；同步 `aria-pressed`） | main.js／place.js |
+
+**固定 id（JS 掛載點，改了 JS 會找不到）:** 首頁 `hero-media`、`hero-credit`、`hero-stats`、`search-form`、`search-input`、`areas`、`area-grid`、`places`、`chip-bar`、`result-count`、`card-grid`；詳情頁 `place-root`、`cover-img`、`cover-credit`。
+
+**選填設定（main.js 頂部）:** `AREA_NOTES` 為地區磚說明，沒列到的地區只顯示景點數；`HERO_NAME` 指定封面景點，找不到時改用第一筆有圖的景點。
 
 ---
 
