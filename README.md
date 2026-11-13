@@ -11,11 +11,14 @@
 
 這個 repo 同時是「文件驅動 multi-agent 協作」的實驗場:1 位人類(Nicky)+ 4 個 AI agent(Instinct、Cue、Hark、Muse)只靠 repo 內的文件鏈領任務、開發、審查、交接,過程中不由人類口頭協調。任何人或 AI 進場,照順序讀完文件就知道該做什麼、做到什麼程度算完成。
 
-## 網站畫面
+## 網站畫面（第一階段 vs 第二階段）
 
-| 首頁:景點卡片 + 地區/類型篩選 | 詳情頁:多圖輪播 + 署名出處 |
-| --- | --- |
-| ![首頁](assets/docs/screenshot-home.jpg) | ![詳情頁](assets/docs/screenshot-place.jpg) |
+|  | 第一階段（舊版） | 第二階段（新版） |
+| --- | --- | --- |
+| 首頁 | ![首頁（第一階段）](assets/docs/screenshot-home.jpg) | ![首頁（第二階段）](assets/docs/screenshot-home-v2.jpg) |
+| 詳情頁 | ![詳情頁（第一階段）](assets/docs/screenshot-place.jpg) | ![詳情頁（第二階段）](assets/docs/screenshot-place-v2.jpg) |
+
+第一階段截圖保留為舊版風格紀錄；第二階段為本次重設計版（現代、照片優先），週一繳交此版。
 
 ## 網站功能
 
@@ -46,7 +49,7 @@
 ```mermaid
 flowchart TD
     A[進場] --> B[依序讀文件鏈<br/>SPEC → SDD → AGENTS → TASKS → handoff]
-    B --> C[認領任務<br/>名字 commit 進 TASKS.md,先 commit 先得]
+    B --> C[指派任務<br/>負責人依能力由 Nicky 指派，寫死在 TASKS.md]
     C --> D[從 dev 開分支<br/>agent/任務編號-簡述]
     D --> E[實作 + 本地驗證<br/>validate.py + 15 個單元測試]
     E --> F[開 PR 進 dev]
@@ -61,7 +64,7 @@ flowchart TD
 三條驗收標準(寫在 [SPEC.md](SPEC.md)):
 
 1. **無人放牧**:agent 只靠文件鏈領任務,Nicky 不口頭協調
-2. **零撞車零漏工**:TASKS.md 認領制,先 commit 先得
+2. **零撞車零漏工**:TASKS.md 能力指定分工制,負責人依能力指派並寫死在表上
 3. **handoff 真的有用**:後續 agent 靠 handoff.md 接手,不回問前一棒
 
 ## 資料管線
@@ -98,7 +101,7 @@ flowchart LR
 | T11 | Instinct | 官網照片全量入庫:多圖 schema、389 張照片、詳情頁輪播 | [PR #10](https://github.com/nickyxu1985/penghu-travel-guide/pull/10) |
 | 里程碑 | Nicky | dev → main 合併 | [PR #11](https://github.com/nickyxu1985/penghu-travel-guide/pull/11) |
 | T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 規範重寫版型、CSS、前端 JS，純靜態、資料格式不變 | 進行中 |
-| T10 | Nicky | 2026-11-16 繳交 | 待開始 |
+| T10 | Nicky | 2026-11-16 前繳交 | 待開始 |
 
 每個 agent 的 GitHub 留言都署自己的名字(如「By Instinct Agent」),方便管理與追溯。
 
@@ -111,7 +114,7 @@ flowchart LR
 - **改的方向：** 現代、照片優先的旅遊站（AGENTS.md §5 第二階段規範）：Apple 式浮動導覽、Airbnb 式照片卡片、雜誌式滿版封面；純改版面、不動資料與功能，只保留 `data/places.json` 資料格式，維持純靜態、GitHub Pages 直接能跑。
 - **標準制定：** Muse（第二階段專案經理）定風格標準，寫入 AGENTS.md §5。
 - **指派：** Hark（藝術總監）依 AGENTS.md §5 第二階段規範實作第二版。
-- **繳交：** 週一 11/16 繳交此重設計版本。第一階段 `main` 為保底，若重設計版未及上線，仍以第一版繳交。
+- **繳交：** 11/16 前繳交此重設計版本。第一階段 `main` 為保底，若重設計版未及上線，仍以第一版繳交。
 - **規格同步：** AGENTS.md §5 已同步更新為第二階段風格；實作完成後須把 HTML class 清單補回 §5。
 
 第一階段的網站畫面（見上方「網站畫面」）予以保留，作為舊風格的紀錄。
@@ -123,7 +126,7 @@ Multi-agent 協作最大的風險是黑箱:AI 產出了東西,但沒有人知道
 | 機制 | 白盒化效果 |
 | --- | --- |
 | 文件鏈 SPEC → SDD → AGENTS → TASKS | 每個 agent 的判斷依據是同一套公開規則;產出對不對,照規則逐條核對就知道,不用猜它在想什麼 |
-| 認領制 + 分支命名 | 誰做什麼、何時開始,全部留痕;先 commit 先得,避免撞車與漏工 |
+| 能力指定分工 + 分支命名 | 誰做什麼依能力指派、寫死在表上,全部留痕,避免撞車與漏工 |
 | handoff.md / PROGRESS.md 工作日誌 | 每個 agent 自己記錄做了什麼、留下什麼坑;下一棒接手不需回問,決策脈絡不消失 |
 | per-agent 署名 commit 與留言 | 每筆改動可追溯到具體 agent(如「By Instinct Agent」),責任歸屬明確 |
 | PR 審查 + issue 制度 | 產出必須經其他 agent 審查;發現問題開 issue、不順手改,問題與修正都有紀錄(例:T7 審查 → issue #3/#4/#5 → PR #7 修正) |
@@ -166,7 +169,7 @@ Multi-agent 協作最大的風險是黑箱:AI 產出了東西,但沒有人知道
 1. [SPEC.md](SPEC.md) — 專案規格:目標、範圍、不做清單、驗收標準
 2. [SDD.md](SDD.md) — 技術設計:資料流、渲染、驗證、官網欄位對映
 3. [AGENTS.md](AGENTS.md) — 開發規則(欄位定義、新增 SOP、風格、禁止清單)
-4. [TASKS.md](TASKS.md) — 分工表與認領規則
+4. [TASKS.md](TASKS.md) — 分工表與指派規則（能力指定分工）
 5. [handoff.md](handoff.md) — 交接紀錄:每個 agent 各自記錄,下一棒從這裡接手
 6. [PROGRESS.md](PROGRESS.md) — 開發進度總表(統一由 Instinct 登錄,其他人只讀)
 
