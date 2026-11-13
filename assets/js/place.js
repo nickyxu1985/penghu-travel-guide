@@ -1,14 +1,20 @@
 /**
  * place.js — 景點詳情頁(place.html?slug=<slug>)
  *
- * 資料:data/places.json(欄位定義見 AGENTS.md §3,顯示順序見 SDD.md §3.2)。
- * 缺 slug、查無此筆、資料為空或讀取失敗時,顯示友善狀態訊息,不拋錯。
+ * 資料:data/places.json(欄位定義見 AGENTS.md §3)。
+ * 版面與 class 命名見 AGENTS.md §5(第二階段):滿版封面 → 兩欄(引言+介紹+提示框 / 吸頂資訊卡)
+ * → 相簿(縮圖點一下換封面圖與出處)→ 同地區推薦 3 筆(同類型優先)。
+ * 查無 slug、資料空或讀取失敗時,顯示友善空態,不拋錯。
  */
 
 (function () {
   'use strict';
 
   var DATA_URL = 'data/places.json';
+  var MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=';
+  var RELATED_COUNT = 3;
+
+  // ---------- 工具 ----------
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
@@ -23,141 +29,201 @@
     return typeof url === 'string' && /^https:\/\//i.test(url);
   }
 
-  function renderStatus(container, title, hint) {
+  function safeImageSrc(src) {
+    return typeof src === 'string' && /^assets\/img\/[a-z0-9-]+\.(jpg|jpeg|png|webp)$/.test(src) ? src : '';
+  }
+
+  function validImages(place) {
+    var imgs = place && Array.isArray(place.images) ? place.images : [];
+    return imgs.filter(function (img) { return img && safeImageSrc(img.src); });
+  }
+
+  /** credit 格式「署名(出處頁 URL)」→「圖片來源:<署名連結>」 */
+  function renderCredit(credit) {
+    var text = String(credit || '').trim();
+    var match = text.match(/^(.*?)\s*[(（](https:\/\/[^()（）]+)[)）]$/);
+    if (match && isSafeUrl(match[2])) {
+      return '圖片來源：<a href="' + escapeHtml(match[2]) + '" target="_blank" rel="noopener">' +
+        escapeHtml(match[1] || match[2]) + '</a>';
+    }
+    return text ? '圖片來源：' + escapeHtml(text) : '';
+  }
+
+  function renderEmpty(container, title, hint) {
     container.innerHTML =
-      '<div class="empty-state">' +
+      '<div class="empty-state empty-state-page">' +
       '<p class="empty-state-title">' + escapeHtml(title) + '</p>' +
       (hint ? '<p class="empty-state-hint">' + escapeHtml(hint) + '</p>' : '') +
-      '<p><a href="index.html">&larr; 回景點列表</a></p>' +
+      '<a class="btn btn-dark" href="index.html">回景點列表</a>' +
       '</div>';
   }
 
-  function paragraphs(text) {
-    return String(text).split(/\n{2,}/).map(function (p) {
-      return p.trim() ? '<p>' + escapeHtml(p.trim()) + '</p>' : '';
-    }).join('');
-  }
+  // ---------- 區塊 ----------
 
-  /** credit 格式為「署名(出處頁 URL)」時,渲染成「圖片來源:<連結>」。 */
-  function renderCredit(credit) {
-    var text = String(credit || '');
-    var match = text.match(/^(.*)\((https:\/\/[^()]+)\)$/);
-    if (match && isSafeUrl(match[2])) {
-      return '圖片來源:<a href="' + escapeHtml(match[2]) + '" target="_blank" rel="noopener">' +
-        escapeHtml(match[1]) + '</a>';
-    }
-    return '圖片來源:' + escapeHtml(text);
-  }
-
-  function renderFigure(images, name) {
-    if (!Array.isArray(images) || !images.length) { return ''; }
+  function renderCover(place, images) {
     var first = images[0];
-    if (!first || typeof first.src !== 'string') { return ''; }
-    var nav = images.length > 1
-      ? '<button type="button" class="place-gallery-nav place-gallery-prev" aria-label="上一張照片">&#8249;</button>' +
-        '<button type="button" class="place-gallery-nav place-gallery-next" aria-label="下一張照片">&#8250;</button>' +
-        '<span class="place-gallery-counter">1 / ' + images.length + '</span>'
-      : '';
-    return '<figure class="place-figure place-gallery">' +
-      '<div class="place-gallery-stage">' +
-      '<img class="place-image" src="' + escapeHtml(first.src) + '" alt="' + escapeHtml(name) + '">' +
-      nav +
+    return '<section class="cover">' +
+      (first ? '<img class="cover-img" id="cover-img" src="' + escapeHtml(first.src) + '" alt="' + escapeHtml(place.name) + '">'
+             : '<div class="cover-img cover-img-empty" aria-hidden="true"></div>') +
+      '<div class="cover-shade" aria-hidden="true"></div>' +
+      '<div class="cover-body">' +
+      '<nav class="breadcrumb" aria-label="麵包屑">' +
+      '<a href="index.html">首頁</a><span aria-hidden="true">/</span>' +
+      (place.area ? '<a href="index.html?area=' + encodeURIComponent(place.area) + '#places">' + escapeHtml(place.area) + '</a><span aria-hidden="true">/</span>' : '') +
+      '<span aria-current="page">' + escapeHtml(place.name) + '</span>' +
+      '</nav>' +
+      (place.category ? '<span class="cover-badge">' + escapeHtml(place.category) + '</span>' : '') +
+      '<h1 class="cover-title">' + escapeHtml(place.name) + '</h1>' +
       '</div>' +
-      '<figcaption class="place-image-credit">' + renderCredit(first.credit) + '</figcaption>' +
-      '</figure>';
+      (first ? '<p class="cover-credit" id="cover-credit">' + renderCredit(first.credit) + '</p>' : '') +
+      '</section>';
   }
 
-  /** 輪播行為:切換圖片、計數與 credit。 */
-  function initGallery(container, images, name) {
-    var gallery = container.querySelector('.place-gallery');
-    if (!gallery || images.length < 2) { return; }
-    var image = gallery.querySelector('.place-image');
-    var counter = gallery.querySelector('.place-gallery-counter');
-    var credit = gallery.querySelector('.place-image-credit');
-    var index = 0;
-    function show(next) {
-      index = (next + images.length) % images.length;
-      image.src = images[index].src;
-      image.alt = name;
-      counter.textContent = (index + 1) + ' / ' + images.length;
-      credit.innerHTML = renderCredit(images[index].credit);
-    }
-    gallery.querySelector('.place-gallery-prev').addEventListener('click', function () { show(index - 1); });
-    gallery.querySelector('.place-gallery-next').addEventListener('click', function () { show(index + 1); });
+  function renderArticle(place) {
+    var paragraphs = String(place.description || '').split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+    return '<article class="article">' +
+      (place.summary ? '<p class="lede">' + escapeHtml(place.summary) + '</p>' : '') +
+      paragraphs.map(function (p) { return '<p class="prose">' + escapeHtml(p).replace(/\n/g, '<br>') + '</p>'; }).join('') +
+      '<aside class="notice"><strong class="notice-title">出發前請至官網確認</strong>' +
+      '<span class="notice-text">開放時間、票價、交通、船班與潮汐都可能變動，本站不列這些易變資訊。</span></aside>' +
+      '</article>';
   }
 
-  function renderSources(sources) {
-    if (!Array.isArray(sources)) { return ''; }
-    var items = [];
-    sources.forEach(function (url, i) {
-      if (!isSafeUrl(url)) { return; }
-      var label = i === 0 ? '澎管處官網介紹' : '參考資料 ' + i;
-      items.push('<li><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a></li>');
+  function renderInfoCard(place) {
+    var rows = [];
+    if (place.area) { rows.push(['地區', escapeHtml(place.area)]); }
+    if (place.category) { rows.push(['類型', escapeHtml(place.category)]); }
+    if (place.address) { rows.push(['地址', escapeHtml(place.address)]); }
+
+    var mapQuery = place.address || ('澎湖 ' + place.name);
+    var sources = Array.isArray(place.sources) ? place.sources.filter(isSafeUrl) : [];
+    var tags = Array.isArray(place.tags) ? place.tags.slice(0, 5) : [];
+
+    return '<aside class="info-card" aria-label="景點資訊">' +
+      '<dl class="info-list">' + rows.map(function (r) {
+        return '<div class="info-row"><dt class="info-label">' + r[0] + '</dt><dd class="info-value">' + r[1] + '</dd></div>';
+      }).join('') + '</dl>' +
+      '<div class="info-actions">' +
+      '<a class="btn btn-dark" href="' + escapeHtml(MAPS_URL + encodeURIComponent(mapQuery)) + '" target="_blank" rel="noopener">在 Google 地圖開啟</a>' +
+      sources.map(function (url, i) {
+        return '<a class="btn btn-ghost" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' +
+          (i === 0 ? '澎管處官網介紹' : '參考資料 ' + i) + '</a>';
+      }).join('') +
+      '</div>' +
+      (tags.length ? '<ul class="tag-list">' + tags.map(function (t) {
+        return '<li class="tag">' + escapeHtml(t) + '</li>';
+      }).join('') + '</ul>' : '') +
+      (place.updated_at ? '<p class="info-updated">資料整理日：' + escapeHtml(place.updated_at) + '</p>' : '') +
+      '</aside>';
+  }
+
+  function renderGallery(place, images) {
+    if (images.length < 2) { return ''; }
+    return '<section class="gallery" aria-label="相簿">' +
+      '<h2 class="block-title">相簿 <span class="block-count">' + images.length + ' 張</span></h2>' +
+      '<div class="thumb-row">' + images.map(function (img, i) {
+        return '<button type="button" class="thumb' + (i === 0 ? ' is-active' : '') + '" data-index="' + i +
+          '" aria-label="顯示第 ' + (i + 1) + ' 張照片" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' +
+          '<img class="thumb-img" src="' + escapeHtml(img.src) + '" alt="" loading="lazy"></button>';
+      }).join('') + '</div>' +
+      '</section>';
+  }
+
+  function pickRelated(place, all) {
+    var pool = all.filter(function (p) { return p.slug !== place.slug && p.area === place.area; });
+    pool.sort(function (a, b) {
+      var sa = a.category === place.category ? 0 : 1;
+      var sb = b.category === place.category ? 0 : 1;
+      return sa - sb || String(a.name).localeCompare(String(b.name), 'zh-Hant');
     });
-    return items.length ? '<ul class="place-source">' + items.join('') + '</ul>' : '';
+    return pool.slice(0, RELATED_COUNT);
   }
 
-  function renderPlace(container, place) {
-    document.title = (place.name || '景點介紹') + ' | 澎湖旅遊指南';
+  function renderRelated(place, all) {
+    var list = pickRelated(place, all);
+    if (!list.length) { return ''; }
+    return '<section class="related" aria-label="同地區推薦">' +
+      '<h2 class="block-title">同在' + escapeHtml(place.area) + '</h2>' +
+      '<div class="card-grid">' + list.map(function (p) {
+        var img = validImages(p)[0];
+        return '<a class="card" href="place.html?slug=' + encodeURIComponent(p.slug) + '">' +
+          '<div class="card-media">' +
+          (img ? '<img class="card-img" src="' + escapeHtml(img.src) + '" alt="' + escapeHtml(p.name) + '" loading="lazy">'
+               : '<div class="card-img card-img-empty" aria-hidden="true"></div>') +
+          (p.category ? '<span class="card-badge">' + escapeHtml(p.category) + '</span>' : '') +
+          '</div><div class="card-body">' +
+          '<p class="card-area">' + escapeHtml(p.area) + '</p>' +
+          '<h3 class="card-title">' + escapeHtml(p.name) + '</h3>' +
+          (p.summary ? '<p class="card-summary">' + escapeHtml(p.summary) + '</p>' : '') +
+          '</div></a>';
+      }).join('') + '</div>' +
+      '</section>';
+  }
 
-    var meta = [];
-    if (place.category) { meta.push('<strong>' + escapeHtml(place.category) + '</strong>'); }
-    if (place.area) { meta.push(escapeHtml(place.area)); }
+  function bindGallery(images) {
+    var row = document.querySelector('.thumb-row');
+    var cover = document.getElementById('cover-img');
+    var credit = document.getElementById('cover-credit');
+    if (!row || !cover) { return; }
+    row.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('.thumb');
+      if (!btn) { return; }
+      var i = parseInt(btn.getAttribute('data-index'), 10);
+      if (!images[i]) { return; }
+      cover.src = images[i].src;
+      if (credit) { credit.innerHTML = renderCredit(images[i].credit); }
+      Array.prototype.forEach.call(row.querySelectorAll('.thumb'), function (el) {
+        var on = el === btn;
+        el.classList.toggle('is-active', on);
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var top = document.querySelector('.cover');
+      if (top) {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        top.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    });
+  }
 
-    var figure = renderFigure(place.images, place.name);
+  // ---------- 主流程 ----------
 
-    var tags = Array.isArray(place.tags) && place.tags.length
-      ? '<ul class="place-tags">' + place.tags.map(function (t) {
-          return '<li class="tag">' + escapeHtml(t) + '</li>';
-        }).join('') + '</ul>'
-      : '';
-
-    container.innerHTML =
-      figure +
-      (meta.length ? '<p class="place-meta">' + meta.join(' · ') + '</p>' : '') +
-      '<h2 class="place-name">' + escapeHtml(place.name || '未命名景點') + '</h2>' +
-      (place.summary ? '<p class="place-summary">' + escapeHtml(place.summary) + '</p>' : '') +
-      (place.description ? '<div class="place-description">' + paragraphs(place.description) + '</div>' : '') +
-      (place.address ? '<p class="place-address">地址:' + escapeHtml(place.address) + '</p>' : '') +
-      tags +
-      '<p class="place-notice">開放時間、交通與潮汐會變動,出發前請至官網確認。</p>' +
-      renderSources(place.sources) +
-      (place.updated_at ? '<p class="place-updated">資料整理日:' + escapeHtml(place.updated_at) + '</p>' : '');
-
-    initGallery(container, Array.isArray(place.images) ? place.images : [], place.name || '');
+  function render(root, place, all) {
+    var images = validImages(place);
+    document.title = place.name + ' | 澎湖旅遊指南';
+    root.innerHTML =
+      renderCover(place, images) +
+      '<div class="detail">' + renderArticle(place) + renderInfoCard(place) + '</div>' +
+      renderGallery(place, images) +
+      renderRelated(place, all);
+    bindGallery(images);
   }
 
   function init() {
-    var container = document.getElementById('place-detail');
-    if (!container) { return; }
+    var root = document.getElementById('place-root');
+    if (!root) { return; }
+    var slug = new URLSearchParams(window.location.search).get('slug') || '';
 
-    var slug = new URLSearchParams(window.location.search).get('slug');
-    if (!slug) {
-      renderStatus(container, '沒有指定景點。', '請從景點列表挑一個景點進來。');
-      return;
-    }
-
-    renderStatus(container, '景點資料載入中…');
-
-    fetch(DATA_URL, { cache: 'no-store' })
+    fetch(DATA_URL)
       .then(function (res) {
         if (!res.ok) { throw new Error('HTTP ' + res.status); }
         return res.json();
       })
       .then(function (data) {
-        var places = Array.isArray(data) ? data : [];
-        var place = null;
-        for (var i = 0; i < places.length; i++) {
-          if (places[i] && places[i].slug === slug) { place = places[i]; break; }
-        }
-        if (!place) {
-          renderStatus(container, '查無此景點。', '這個景點可能尚未收錄,或連結有誤。');
+        if (!Array.isArray(data) || data.length === 0) {
+          renderEmpty(root, '目前還沒有景點資料', '資料整理中，請稍後再來。');
           return;
         }
-        renderPlace(container, place);
+        var all = data.filter(function (p) { return p && p.slug && p.name; });
+        var place = null;
+        for (var i = 0; i < all.length; i++) { if (all[i].slug === slug) { place = all[i]; break; } }
+        if (!place) {
+          renderEmpty(root, '找不到這個景點', slug ? '網址中的景點代號「' + slug + '」不存在，可能已改名或下架。' : '網址缺少景點代號(?slug=)。');
+          return;
+        }
+        render(root, place, all);
       })
       .catch(function () {
-        renderStatus(container, '暫時無法讀取景點資料。', '請稍後再試,或先回景點列表看看。');
+        renderEmpty(root, '景點資料讀取失敗', '請透過 HTTP 開啟本站(例如 GitHub Pages,或在專案根目錄執行 python -m http.server 8000),不要直接雙擊檔案。');
       });
   }
 
