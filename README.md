@@ -101,7 +101,7 @@ flowchart LR
 | T11 | Instinct | 官網照片全量入庫:多圖 schema、389 張照片、詳情頁輪播 | [PR #10](https://github.com/nickyxu1985/penghu-travel-guide/pull/10) |
 | 里程碑 | Nicky | dev → main 合併 | [PR #11](https://github.com/nickyxu1985/penghu-travel-guide/pull/11) |
 | T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 規範重寫版型、CSS、前端 JS，純靜態、資料格式不變 | 進行中 |
-| T13 | Hark | 詳情頁相簿燈箱：點縮圖彈出完整照片，可放大縮小、上一張/下一張、關閉 | 待開始 |
+| T13 | Hark | 詳情頁相簿燈箱：點縮圖彈出完整照片，可放大縮小、上一張/下一張、關閉 | 已完成（PR #20） |
 | T14 | Instinct | Issue #18 修正：重抓 15 筆截斷的 description（修正則 + 放寬 600 字上限） | 待開始 |
 | T10 | Nicky | 2026-11-16 前繳交 | 待開始 |
 
