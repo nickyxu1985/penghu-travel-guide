@@ -64,7 +64,7 @@
 | V3 | 型別正確(字串 / 字串陣列) |
 | V4 | `slug` 符合 kebab-case 正規式,全檔唯一 |
 | V5 | `area`、`category` 在允許清單內 |
-| V6 | `name` 1–30 字;`summary` 20–100 字;`description` ≤ 600 字 |
+| V6 | `name` 1–30 字;`summary` 20–100 字;`description` 不設上限(保留官網全文) |
 | V7 | `tags` 0–5 個、每個 2–8 字、不重複 |
 | V8 | `sources` ≥ 1,全部 `https://`;`sources[0]` 網域為 `www.penghu-nsa.gov.tw` |
 | V9 | `updated_at` 為合法日期 `YYYY-MM-DD`,且不晚於今天 |
@@ -93,7 +93,7 @@
 | `category` | 列表卡片的類型文字(如「自然風景類」) | 去掉結尾「類」;不在允許清單 → **報錯停止**,走 AGENTS.md §7 延伸流程,不自動新增 |
 | `slug` | `name` | 漢語拼音無聲調(`pypinyin`),小寫、以 `-` 連接、去除非英數;撞名加 `-<area 拼音>` |
 | `summary` | 詳情頁介紹第一段 | 取第一句,裁到 ≤ 100 字並在句號處斷;**標記待改寫**(見下) |
-| `description` | 詳情頁介紹全文 | 去 HTML、去「追星資訊」「看看環景」等外連段落,段落以 `\n\n` 連接,≤ 600 字在段落邊界截斷 |
+| `description` | 詳情頁介紹全文 | 去 HTML、去「追星資訊」「看看環景」等外連段落,段落以 `\n\n` 連接;保留全文,不截斷 |
 | `address` | 景點資訊「地址」 | 原樣 |
 | `tags` | — | 不自動產生,留空,由 T8 人工補 |
 | `images` | 詳情頁 swiper 輪播(id 含 `repPhoto` 的 img;`repNearScenery` 為鄰近景點縮圖,不抓) | `fetch_photos.py` 全量抓取,存 `assets/img/<slug>-<n>.<ext>`;`credit` 固定「交通部觀光署澎湖國家風景區管理處官網(詳情頁 URL)」(已與澎管處承辦人確認:標機關署名+註明出處即可使用;官網無攝影者欄位) |

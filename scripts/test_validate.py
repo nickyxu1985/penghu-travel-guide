@@ -77,12 +77,15 @@ class ValidationTests(unittest.TestCase):
 
     def test_v6_lengths_and_boundaries(self):
         for field, bad in (("name", "字" * 31), ("name", ""), ("summary", "字" * 19),
-                           ("summary", "字" * 101), ("description", "字" * 601)):
+                           ("summary", "字" * 101)):
             with self.subTest(field=field, length=len(bad)):
                 self.check_rule("V6", self.changed(**{field: bad}))
+        # description 不設上限(Issue #18:600 字上限曾截斷官網全文)
         for length in (20, 100):
             self.assertEqual(validate(self.changed(name="字" * 30, summary="字" * length,
                 description="字" * 600), today=TODAY), [])
+        self.assertEqual(validate(self.changed(description="字" * 601), today=TODAY), [])
+        self.assertEqual(validate(self.changed(description="字" * 2000), today=TODAY), [])
 
     def test_v7_tags(self):
         for tags in (["字"], ["字" * 9], ["石滬", "石滬"], ["標籤" + str(i) for i in range(6)]):

@@ -109,10 +109,15 @@ def validate(places, root=REPO_ROOT, today=None):
             if field in place and isinstance(place[field], str) and place[field] not in allowed:
                 error("V5", field, f"允許值為 {'、'.join(allowed)}")
         for field, minimum, maximum in (("name", 1, 30), ("summary", 20, 100),
-                                        ("description", 0, 600)):
+                                        ("description", 0, None)):
             value = place.get(field)
-            if isinstance(value, str) and not minimum <= len(value) <= maximum:
-                error("V6", field, f"長度須為 {minimum}–{maximum} 字,目前 {len(value)} 字")
+            if not isinstance(value, str):
+                continue
+            if maximum is not None:
+                if not minimum <= len(value) <= maximum:
+                    error("V6", field, f"長度須為 {minimum}–{maximum} 字,目前 {len(value)} 字")
+            elif len(value) < minimum:
+                error("V6", field, f"長度須至少 {minimum} 字,目前 {len(value)} 字")
 
         tags = place.get("tags")
         if isinstance(tags, list):
