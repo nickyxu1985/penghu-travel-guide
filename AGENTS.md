@@ -158,38 +158,92 @@ penghu-travel-guide/
 
 ---
 
-## 5. 風格規範
+## 5. 風格規範（第二階段，2026-11-13 起）
 
-**調性:** 「玄武岩、海、天人菊」。底色是曬過的沙,主色是深海藍,強調色是天人菊的橘;深灰取自玄武岩。版面乾淨、留白多,字比圖重要。
+**設計方向:** 現代、照片優先的旅遊站。不沿用政府制式版型，以澎管處官方照片為主角。族系參考（非照抄）：Apple 式導覽（浮動膠囊頂欄、毛玻璃）、Airbnb 式卡片（4:3 大圖、圖上標籤、文字在圖下、hover 浮起加放大）、雜誌式封面（滿版圓角大圖、標題壓在左下漸層）。
 
-**色票(只用 `style.css` 頂部的 CSS 變數,不可在別處寫死色碼):**
+**純靜態限制:**
+- 不載外部字型、不用框架、不用 CDN。
+- 只讀 `data/places.json`，資料格式不變。
+- 需經 HTTP 提供（GitHub Pages 可直接跑；本機不可直接雙擊檔案開啟）。
+- 篩選值由資料自動產生，新增地區或類型不用改 JS。
 
-| 變數 | 色碼 | 用途 |
+**色彩（只用 CSS 變數，不可寫死色碼）:**
+
+| 變數 | 值 | 用途 |
 |------|------|------|
-| `--color-sand` | `#F7F3EA` | 頁面底色 |
-| `--color-paper` | `#FFFFFF` | 卡片、詳情頁底 |
-| `--color-basalt` | `#2B2F33` | 主文字、頁尾底色 |
-| `--color-muted` | `#6B6F73` | 次要文字(地址、更新日) |
-| `--color-sea` | `#0E5A7A` | 主色:頁首、連結、選中的篩選鈕 |
-| `--color-sea-light` | `#E3EEF2` | 標籤底色、hover 底色 |
-| `--color-gaillardia` | `#E07A2F` | 強調色(天人菊):卡片頂端色條、焦點框 |
-| `--color-line` | `#E4DED1` | 分隔線、卡片邊框 |
+| `--bg` | `#F6F5F1` | 頁面底色（暖白） |
+| `--surface` | `#FFFFFF` | 卡片、資訊卡 |
+| `--ink` | `#0E1318` | 主文字、選中 chip |
+| `--ink-2` | `#4A525A` | 內文 |
+| `--ink-3` | `#8A9097` | 輔助字 |
+| `--night` | `#0B1B24` | 封面底色、頁尾 |
+| `--accent` | `#FF6A3D` | 地區字、選中框、提示框（天人菊橘） |
+| `--sea` | `#0A7EA4` | 連結 |
+| `--sea-soft` | `#E4F3F8` | 標籤 |
 
-**字體:** 系統字體堆疊,不載入外部字型(維持純靜態、離線可看):
-`"PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif`。
-內文 16px、行高 1.75;標題字重 700。
+**字型:** 系統無襯線，不載入外部字型：
+`-apple-system, SF Pro, Segoe UI, PingFang TC, Noto Sans TC, 微軟正黑體`。
+標題字重 800、字距 -0.02 ～ -0.03em、用 `clamp()` 隨螢幕縮放（首頁 h1 2.8–6rem）。內文 16px、行高 1.7。
 
-**版型:**
+**形狀與動態:**
+- 圓角：28px（封面、資訊卡、頁尾）、20px（卡片、地區磚）、14px（縮圖、提示框）；按鈕與 chip 一律膠囊。
+- 內容最大寬 1240px。
+- 動畫緩動 `cubic-bezier(0.2,0.7,0.2,1)`；尊重 `prefers-reduced-motion`（關掉所有動畫）。
 
-- 內容最大寬度 1080px,置中。
-- 首頁卡片用 CSS Grid:手機 1 欄、≥ 640px 2 欄、≥ 960px 3 欄。
-- 卡片:白底、圓角 12px、細邊框、頂端 4px 天人菊色條;順序為「類型 · 地區 → 名稱 → 摘要 → 標籤」。沒有圖片也要好看(本期預設無圖)。
-- 篩選鈕:膠囊形;選中時深海藍底白字。
-- 詳情頁:單欄,最大寬度 720px,方便閱讀長文。
-- 所有可點元素要有看得見的鍵盤焦點框(天人菊色)。
+**首頁結構:**
+- 浮動頂欄：品牌、地區、所有景點。
+- 封面：七美雙心石滬滿版圖、標語「玄武岩、海風、天人菊。」、搜尋框、即時統計（景點、鄉市、類型、照片數）、圖片出處。
+- 依地區探索：六鄉市圖磚，點一下即篩選。
+- 所有景點：吸頂類型 chip 列（含已選地區可移除、清除篩選），卡片 3 / 2 / 1 欄。
+- 頁尾：資料來源與「出發前請至官網確認」。
+- 篩選狀態同步到網址 `?area=&category=&q=`，可分享、可重新整理。
 
-**HTML class 命名(CSS 與 JS 共用,改名要兩邊一起改):**
-`site-header`、`site-subtitle`、`site-nav`、`site-footer`、`filter-bar`、`filter-group`、`filter-label`、`filter-chip`(選中加 `is-active`)、`result-count`、`place-list`、`place-card`(`-meta / -name / -summary / -tags`)、`place-detail`(`place-figure / place-image / place-image-credit / place-meta / place-name / place-summary / place-description / place-address / place-tags / place-notice / place-source / place-updated`)、`tag`、多圖輪播 `place-gallery`(`-stage / -nav / -prev / -next / -counter`)、`empty-state`(`-title / -hint`)。
+**詳情頁結構:**
+- 滿版封面：麵包屑、類型標籤、景點名、圖片出處。
+- 兩欄：左為摘要引言（粗體大字）＋介紹＋提示框；右為吸頂資訊卡（地區、類型、地址、Google 地圖按鈕、官網連結、標籤、資料整理日）。
+- 相簿：縮圖點一下換封面圖與出處。
+- 同地區推薦 3 筆（同類型優先）。
+
+**響應式斷點:**
+- ≤ 1100px：地區磚 3 欄。
+- ≤ 960px：卡片 2 欄、詳情頁改單欄、資訊卡不吸頂。
+- ≤ 640px：卡片 1 欄、地區磚 2 欄且隱藏說明、封面圓角 22px。
+
+**安全與穩健:**
+- 所有資料字串經 escape 再寫入 HTML。
+- 外部連結只接受 https 開頭的網址，一律新分頁開啟並加 `rel=noopener`。
+- 資料空、查無、讀取失敗都顯示友善空態，不拋錯。
+
+**異動檔案:** `index.html`、`place.html`、`assets/css/style.css`、`assets/js/main.js`、`assets/js/place.js`（`ai.js` 與資料未動）。
+
+**HTML class 命名:** 由實作方定義，CSS 與 JS 共用，改名要兩邊一起改；清單如下（T12 實作）。
+
+| 區塊 | class | 產生者 |
+|------|-------|--------|
+| 頁面 | `page-home`、`page-place`（body） | HTML |
+| 浮動頂欄 | `topbar`、`topbar-inner`、`brand`、`brand-mark`、`topbar-links`、`topbar-link` | HTML |
+| 首頁封面 | `hero`、`hero-media`、`hero-img`、`hero-shade`、`hero-body`、`hero-kicker`、`hero-title`、`hero-lead`、`hero-credit` | HTML／main.js |
+| 搜尋 | `search`、`search-input`、`search-btn`、`visually-hidden` | HTML |
+| 即時統計 | `hero-stats`、`stat`、`stat-label`、`stat-value` | main.js |
+| 區塊標題 | `section`、`section-head`、`eyebrow`、`section-title` | HTML |
+| 地區磚 | `area-grid`、`area-tile`、`area-tile-img`、`area-tile-shade`、`area-tile-body`、`area-tile-name`、`area-tile-note`、`area-tile-count` | main.js |
+| 類型 chip 列 | `chip-bar`、`chip-row`、`chip-extras`、`chip`、`chip-area`、`chip-x`、`chip-clear`、`result-count` | main.js |
+| 景點卡片 | `card-grid`、`card`、`card-media`、`card-img`、`card-img-empty`、`card-badge`、`card-body`、`card-area`、`card-title`、`card-summary` | main.js／place.js |
+| 標籤 | `tag-list`、`tag` | main.js／place.js |
+| 詳情封面 | `cover`、`cover-img`、`cover-img-empty`、`cover-shade`、`cover-body`、`breadcrumb`、`cover-badge`、`cover-title`、`cover-credit` | place.js |
+| 詳情兩欄 | `detail`、`article`、`lede`、`prose`、`notice`、`notice-title`、`notice-text` | place.js |
+| 資訊卡 | `info-card`、`info-list`、`info-row`、`info-label`、`info-value`、`info-actions`、`info-updated` | place.js |
+| 相簿 | `gallery`、`block-title`、`block-count`、`thumb-row`、`thumb`、`thumb-img` | place.js |
+| 同地區推薦 | `related`（內含 `card-grid`／`card`） | place.js |
+| 按鈕 | `btn`、`btn-dark`、`btn-ghost` | place.js |
+| 空態 | `empty-state`、`empty-state-page`、`empty-state-title`、`empty-state-hint` | main.js／place.js |
+| 頁尾 | `site-footer`、`footer-inner`、`footer-brand`、`footer-text` | HTML |
+| 狀態 | `is-active`（選中的地區磚、chip、縮圖；同步 `aria-pressed`） | main.js／place.js |
+
+**固定 id（JS 掛載點，改了 JS 會找不到）:** 首頁 `hero-media`、`hero-credit`、`hero-stats`、`search-form`、`search-input`、`areas`、`area-grid`、`places`、`chip-bar`、`result-count`、`card-grid`；詳情頁 `place-root`、`cover-img`、`cover-credit`。
+
+**選填設定（main.js 頂部）:** `AREA_NOTES` 為地區磚說明，沒列到的地區只顯示景點數；`HERO_NAME` 指定封面景點，找不到時改用第一筆有圖的景點。
 
 ---
 
@@ -207,7 +261,7 @@ penghu-travel-guide/
 | `tags` 0–5 個、每個 2–8 字(§3) | 卡片與詳情頁的標籤最多 5 個,不會排滿一整列 |
 | `sources[0]` 必為官網頁(§3) | 每個詳情頁底部都有「澎管處官網介紹」連結 |
 | `updated_at` 必填(§3) | 每個詳情頁顯示「資料整理日」 |
-| `images` 只能用 repo 內檔案、每張須附 `credit`(§3、§8) | 有圖的景點,詳情頁可翻看多張,圖下方一定有署名與出處連結;沒有外連圖片;首頁卡片顯示第 1 張 |
+| `images` 只能用 repo 內檔案、每張須附 `credit`(§3、§8) | 有圖的景點,詳情頁相簿縮圖點一下換封面圖與出處;沒有外連圖片;首頁卡片顯示第 1 張 |
 | 易變資訊不寫死(§8) | 詳情頁不顯示開放時間、票價、船班,改提示「出發前請至官網確認」 |
 | 新增景點只改 places.json(§4) | 所有景點卡片與詳情頁長相一致,沒有一頁特別不一樣 |
 | 色票只用 CSS 變數(§5) | 全站顏色一致;換主題色只要改 `style.css` 頂部一處 |

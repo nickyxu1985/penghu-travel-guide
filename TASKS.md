@@ -23,6 +23,7 @@
 | T8 | Cue | 資料品質把關:summary 抽審、category 校正;W8 精選 8 筆備援 | T6 | 抽審結果以 issue 或 PR 呈現;8 筆備援資料可用 | ✅ 已合併 dev(PR #9) |
 | T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 不適用(T6 全量入庫涵蓋,官網已無未收錄景點) |
 | T11 | Instinct | 官網照片全量入庫:schema 改多圖 `images`、fetch_photos.py 抓全部照片、詳情頁輪播+署名出處、validator/文件同步 | T6 | 139 筆 images 入庫;validate 與單元測試全綠;PR 進 dev | ✅ 已合併 dev(PR #10) |
+| T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 第二階段規範重寫版型、CSS、前端 JS，只保留 places.json 資料格式，純靜態 | AGENTS.md §5（第二階段） | 新版前端 PR 進 dev；CI 全綠；AGENTS.md §5 已同步為新風格 | 進行中（待實作） |
 | T10 | Nicky | 11/16(週一)繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 繳交 | 待開始 |
 
 ## 驗收方法論對應

@@ -3,27 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>澎湖旅遊指南 | 景點列表</title>
-  <meta name="description" content="澎湖旅遊景點介紹站,資料來源:澎湖國家風景區管理處。">
+  <title>澎湖旅遊指南 | 玄武岩、海風、天人菊</title>
+  <meta name="description" content="澎湖景點介紹站，依地區與類型探索澎湖六鄉市景點。資料與照片來源：交通部觀光署澎湖國家風景區管理處。">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-  <header class="site-header">
-    <h1>澎湖旅遊指南</h1>
-    <p class="site-subtitle">澎湖國家風景區景點介紹</p>
+<body class="page-home">
+  <!-- 浮動頂欄（AGENTS.md §5 首頁結構） -->
+  <header class="topbar">
+    <nav class="topbar-inner" aria-label="主要導覽">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span>澎湖旅遊指南</a>
+      <div class="topbar-links">
+        <a class="topbar-link" href="#areas">地區</a>
+        <a class="topbar-link" href="#places">所有景點</a>
+      </div>
+    </nav>
   </header>
 
   <main>
-    <div id="filter-bar" class="filter-bar" hidden></div>
-    <p id="result-count" class="result-count" aria-live="polite"></p>
-    <section id="place-list" class="place-list" aria-live="polite">
-      <!-- 景點卡片由 assets/js/main.js 動態渲染 -->
-      <noscript>本站需要啟用 JavaScript 才能瀏覽景點列表。</noscript>
+    <!-- 封面：雙心石滬滿版圖 + 標語 + 搜尋 + 即時統計 -->
+    <section class="hero" id="hero">
+      <div class="hero-media" id="hero-media"></div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-body">
+        <p class="hero-kicker">PENGHU · 澎湖群島</p>
+        <h1 class="hero-title">玄武岩、海風、天人菊。</h1>
+        <p class="hero-lead">從馬公老街到七美雙心石滬，依地區與類型找到你想去的澎湖。</p>
+        <form class="search" id="search-form" role="search">
+          <label class="visually-hidden" for="search-input">搜尋景點</label>
+          <input class="search-input" id="search-input" type="search" placeholder="搜尋景點、地區或標籤，例如：石滬、玄武岩" autocomplete="off">
+          <button class="search-btn" type="submit">搜尋</button>
+        </form>
+        <dl class="hero-stats" id="hero-stats" aria-live="polite"></dl>
+      </div>
+      <p class="hero-credit" id="hero-credit"></p>
+    </section>
+
+    <!-- 依地區探索：六鄉市圖磚 -->
+    <section class="section" id="areas">
+      <div class="section-head">
+        <p class="eyebrow">依地區探索</p>
+        <h2 class="section-title">六個鄉市，六種海島性格</h2>
+      </div>
+      <div class="area-grid" id="area-grid"></div>
+    </section>
+
+    <!-- 所有景點：吸頂類型 chip 列 + 卡片 -->
+    <section class="section" id="places">
+      <div class="section-head">
+        <p class="eyebrow">所有景點</p>
+        <h2 class="section-title">挑一個地方出發</h2>
+      </div>
+      <div class="chip-bar" id="chip-bar" hidden></div>
+      <p class="result-count" id="result-count" aria-live="polite"></p>
+      <div class="card-grid" id="card-grid" aria-live="polite">
+        <noscript><div class="empty-state"><p class="empty-state-title">本站需要啟用 JavaScript 才能瀏覽景點列表。</p></div></noscript>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>資料來源:<a href="https://www.penghu-nsa.gov.tw/" target="_blank" rel="noopener">澎湖國家風景區管理處</a></p>
+    <div class="footer-inner">
+      <p class="footer-brand">澎湖旅遊指南</p>
+      <p class="footer-text">景點資料與照片來源：<a href="https://www.penghu-nsa.gov.tw/" target="_blank" rel="noopener">交通部觀光署澎湖國家風景區管理處</a>。開放時間、票價、船班等資訊常有變動，出發前請至官網確認。</p>
+    </div>
   </footer>
 
   <script src="assets/js/main.js"></script>
