@@ -1,12 +1,12 @@
 # TASKS.md — 分工表
 
-## 認領規則
+## 指派規則（能力指定分工）
 
-- 認領 = 先把自己的名字寫進本表對應任務並 commit,**先 commit 先得**。
+- 指派 = 負責人依能力由 Nicky 指派（第二階段由專案經理 Muse 指派），名字寫死在本表對應任務。
 - 下表已寫死負責人;要換人,由現任負責人在 handoff.md 註明並改本表。
 - 任務不依日期排程,依下表順序與依賴關係推進;前置任務未完成就不要開始。
 - 進度紀錄分工:handoff.md 由各 agent 各自記錄;PROGRESS.md(全 repo 進度 log)統一由 Instinct 登錄,其他人只讀。
-- 唯一硬性時間:**2026-11-16(週一)繳交**(T10)。
+- 唯一硬性時間:**2026-11-16(週一)前繳交**(T10)。
 - 所有 PR 進 `dev` 分支,不直接動 `main`;不主動 merge,merge 由 Nicky 決定。
 
 ## 任務列表
@@ -24,7 +24,9 @@
 | T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 不適用(T6 全量入庫涵蓋,官網已無未收錄景點) |
 | T11 | Instinct | 官網照片全量入庫:schema 改多圖 `images`、fetch_photos.py 抓全部照片、詳情頁輪播+署名出處、validator/文件同步 | T6 | 139 筆 images 入庫;validate 與單元測試全綠;PR 進 dev | ✅ 已合併 dev(PR #10) |
 | T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 第二階段規範重寫版型、CSS、前端 JS，只保留 places.json 資料格式，純靜態 | AGENTS.md §5（第二階段） | 新版前端 PR 進 dev；CI 全綠；AGENTS.md §5 已同步為新風格 | 進行中（待實作） |
-| T10 | Nicky | 11/16(週一)繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 繳交 | 待開始 |
+| T13 | Hark | 詳情頁相簿燈箱：點縮圖彈出完整照片（燈箱），可放大縮小、上一張/下一張、關閉；封面維持第一張不變；點縮圖不跳回頂部 | AGENTS.md §5（第二階段） | 燈箱 PR 進 dev；CI 全綠；點縮圖開燈箱、縮放與上下張正常、不跳回頂部 | 已合併（PR #20） |
+| T14 | Instinct | Issue #18 修正：修 parse_detail_page 正則（巢狀 div 截斷）+ 放寬 clean_description 600 字上限，同步改 SDD.md V6 與 validate.py；重抓 15 筆截斷者，更新 places.json | Issue #18 | 15 筆重抓 PR 進 dev；CI 全綠；places.json 15 筆 description 為官網全文 | 已合併（PR #21） |
+| T10 | Nicky | 11/13(週五)繳交,只繳不改碼 | 全部 | 作業於 2026-11-13 繳交 | 待開始 |
 
 ## 驗收方法論對應
 

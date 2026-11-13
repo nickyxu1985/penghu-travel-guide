@@ -144,6 +144,25 @@ def page_count(first_page_html):
     return max(1, -(-total // 12)), total
 
 
+def extract_balanced_div(page_html, class_name):
+    """回傳 class 為 class_name 的 <div> 的完整內容(以標籤平衡計數,
+    正確處理巢狀 <div>;舊寫法用非貪婪比對會在第一個巢狀 </div> 早停)。"""
+    start = re.search(
+        r'<div\b[^>]*class="' + re.escape(class_name) + r'"[^>]*>',
+        page_html)
+    if not start:
+        return None
+    depth = 1
+    for tag in re.finditer(r"<div\b[^>]*>|</div>", page_html[start.end():]):
+        if tag.group(0).startswith("</"):
+            depth -= 1
+            if depth == 0:
+                return page_html[start.end():start.end() + tag.start()]
+        else:
+            depth += 1
+    return None
+
+
 def parse_detail_page(page_html):
     """Return (name, description, address) from a detail page."""
     name = ""
@@ -151,10 +170,9 @@ def parse_detail_page(page_html):
     if title:
         name = strip_tags(title.group(1)).strip()
     description = ""
-    article = re.search(
-        r'<div class="article-content kf_edit">(.*?)</div>', page_html, re.S)
-    if article:
-        description = clean_description(strip_tags(article.group(1)))
+    article = extract_balanced_div(page_html, "article-content kf_edit")
+    if article is not None:
+        description = clean_description(strip_tags(article))
     address = ""
     label = re.search(r"地址</span>", page_html)
     if label:
@@ -165,7 +183,8 @@ def parse_detail_page(page_html):
 
 
 def clean_description(text):
-    """去外連段落、段落以 \\n\\n 連接、<= 600 字在段落邊界截斷。"""
+    """去外連段落、段落以 \\n\\n 連接;保留官網全文,不設字數上限
+    (Issue #18:舊版 600 字上限截斷了 7 筆長文,SDD.md V6 已同步放寬)。"""
     lines = [line.strip() for line in text.splitlines()]
     paragraphs, current = [], []
     for line in lines:
@@ -177,18 +196,7 @@ def clean_description(text):
             current.append(line)
     if current:
         paragraphs.append("".join(current))
-    kept, length = [], 0
-    for paragraph in paragraphs:
-        if not paragraph:
-            continue
-        extra = len(paragraph) + (2 if kept else 0)
-        if length + extra > 600:
-            break
-        kept.append(paragraph)
-        length += extra
-    if not kept and paragraphs:
-        kept = [paragraphs[0][:600]]
-    return "\n\n".join(kept)
+    return "\n\n".join(p for p in paragraphs if p)
 
 
 def make_summary(description, name="", area=""):

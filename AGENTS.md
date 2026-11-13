@@ -202,7 +202,7 @@ penghu-travel-guide/
 **詳情頁結構:**
 - 滿版封面：麵包屑、類型標籤、景點名、圖片出處。
 - 兩欄：左為摘要引言（粗體大字）＋介紹＋提示框；右為吸頂資訊卡（地區、類型、地址、Google 地圖按鈕、官網連結、標籤、資料整理日）。
-- 相簿：縮圖點一下換封面圖與出處。
+- 相簿：縮圖點一下開燈箱看完整照片（封面固定第一張、頁面不捲動）；燈箱可上一張/下一張（按鈕、← →）、放大縮小（按鈕、+ − 0、滾輪、雙擊，最高 400%，放大後可拖曳）、關閉（✕ 按鈕、點背景、Esc），關閉後焦點回到原縮圖。（T13）
 - 同地區推薦 3 筆（同類型優先）。
 
 **響應式斷點:**
@@ -215,7 +215,7 @@ penghu-travel-guide/
 - 外部連結只接受 https 開頭的網址，一律新分頁開啟並加 `rel=noopener`。
 - 資料空、查無、讀取失敗都顯示友善空態，不拋錯。
 
-**異動檔案:** `index.html`、`place.html`、`assets/css/style.css`、`assets/js/main.js`、`assets/js/place.js`（`ai.js` 與資料未動）。
+**異動檔案:** `index.html`、`place.html`、`assets/css/style.css`、`assets/js/main.js`、`assets/js/place.js`（`ai.js` 與資料未動）。T13 燈箱只動 `place.html`、`place.js`、`style.css`（新增色彩衍生變數 `--lightbox-bg`、`--lightbox-btn`、`--lightbox-btn-hover`）。
 
 **HTML class 命名:** 由實作方定義，CSS 與 JS 共用，改名要兩邊一起改；清單如下（T12 實作）。
 
@@ -235,13 +235,14 @@ penghu-travel-guide/
 | 詳情兩欄 | `detail`、`article`、`lede`、`prose`、`notice`、`notice-title`、`notice-text` | place.js |
 | 資訊卡 | `info-card`、`info-list`、`info-row`、`info-label`、`info-value`、`info-actions`、`info-updated` | place.js |
 | 相簿 | `gallery`、`block-title`、`block-count`、`thumb-row`、`thumb`、`thumb-img` | place.js |
+| 相簿燈箱（T13） | `lightbox`、`lightbox-stage`、`lightbox-img`、`lightbox-btn`、`lightbox-close`、`lightbox-nav`、`lightbox-prev`、`lightbox-next`、`lightbox-bar`、`lightbox-count`、`lightbox-tools`、`lightbox-zoom-out`、`lightbox-zoom-level`、`lightbox-zoom-in`、`lightbox-credit`；狀態 `is-zoomed`、`is-dragging`（燈箱）、`lightbox-open`（html，鎖住背景捲動） | place.html／place.js |
 | 同地區推薦 | `related`（內含 `card-grid`／`card`） | place.js |
 | 按鈕 | `btn`、`btn-dark`、`btn-ghost` | place.js |
 | 空態 | `empty-state`、`empty-state-page`、`empty-state-title`、`empty-state-hint` | main.js／place.js |
 | 頁尾 | `site-footer`、`footer-inner`、`footer-brand`、`footer-text` | HTML |
-| 狀態 | `is-active`（選中的地區磚、chip、縮圖；同步 `aria-pressed`） | main.js／place.js |
+| 狀態 | `is-active`（選中的地區磚、chip 同步 `aria-pressed`；縮圖的 `is-active` 標出燈箱目前/最後看的那張，縮圖是開燈箱的按鈕、不用 `aria-pressed`） | main.js／place.js |
 
-**固定 id（JS 掛載點，改了 JS 會找不到）:** 首頁 `hero-media`、`hero-credit`、`hero-stats`、`search-form`、`search-input`、`areas`、`area-grid`、`places`、`chip-bar`、`result-count`、`card-grid`；詳情頁 `place-root`、`cover-img`、`cover-credit`。
+**固定 id（JS 掛載點，改了 JS 會找不到）:** 首頁 `hero-media`、`hero-credit`、`hero-stats`、`search-form`、`search-input`、`areas`、`area-grid`、`places`、`chip-bar`、`result-count`、`card-grid`；詳情頁 `place-root`、`cover-img`、`cover-credit`；燈箱 `lightbox`、`lightbox-stage`、`lightbox-img`、`lightbox-close`、`lightbox-prev`、`lightbox-next`、`lightbox-count`、`lightbox-zoom-out`、`lightbox-zoom-level`、`lightbox-zoom-in`、`lightbox-credit`。
 
 **選填設定（main.js 頂部）:** `AREA_NOTES` 為地區磚說明，沒列到的地區只顯示景點數；`HERO_NAME` 指定封面景點，找不到時改用第一筆有圖的景點。
 

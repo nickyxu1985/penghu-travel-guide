@@ -30,6 +30,25 @@
     </div>
   </footer>
 
+  <!-- 相簿燈箱(T13):點相簿縮圖開啟;由 assets/js/place.js 控制(AGENTS.md §5) -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="照片檢視" hidden>
+    <div class="lightbox-stage" id="lightbox-stage">
+      <img class="lightbox-img" id="lightbox-img" alt="" draggable="false">
+    </div>
+    <button type="button" class="lightbox-btn lightbox-close" id="lightbox-close" aria-label="關閉(Esc)">✕</button>
+    <button type="button" class="lightbox-btn lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="上一張(←)">‹</button>
+    <button type="button" class="lightbox-btn lightbox-nav lightbox-next" id="lightbox-next" aria-label="下一張(→)">›</button>
+    <div class="lightbox-bar">
+      <p class="lightbox-count" id="lightbox-count" aria-live="polite"></p>
+      <div class="lightbox-tools" role="group" aria-label="縮放">
+        <button type="button" class="lightbox-btn lightbox-zoom-out" id="lightbox-zoom-out" aria-label="縮小(-)">−</button>
+        <button type="button" class="lightbox-zoom-level" id="lightbox-zoom-level" aria-label="重設為原始大小(0)">100%</button>
+        <button type="button" class="lightbox-btn lightbox-zoom-in" id="lightbox-zoom-in" aria-label="放大(+)">+</button>
+      </div>
+      <p class="lightbox-credit" id="lightbox-credit"></p>
+    </div>
+  </div>
+
   <script src="assets/js/place.js"></script>
 </body>
 </html>

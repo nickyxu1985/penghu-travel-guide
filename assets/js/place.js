@@ -3,7 +3,7 @@
  *
  * 資料:data/places.json(欄位定義見 AGENTS.md §3)。
  * 版面與 class 命名見 AGENTS.md §5(第二階段):滿版封面 → 兩欄(引言+介紹+提示框 / 吸頂資訊卡)
- * → 相簿(縮圖點一下換封面圖與出處)→ 同地區推薦 3 筆(同類型優先)。
+ * → 相簿(縮圖點一下開燈箱看完整照片,封面固定第一張)→ 同地區推薦 3 筆(同類型優先)。
  * 查無 slug、資料空或讀取失敗時,顯示友善空態,不拋錯。
  */
 
@@ -123,7 +123,7 @@
       '<h2 class="block-title">相簿 <span class="block-count">' + images.length + ' 張</span></h2>' +
       '<div class="thumb-row">' + images.map(function (img, i) {
         return '<button type="button" class="thumb' + (i === 0 ? ' is-active' : '') + '" data-index="' + i +
-          '" aria-label="顯示第 ' + (i + 1) + ' 張照片" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' +
+          '" aria-haspopup="dialog" aria-label="放大檢視第 ' + (i + 1) + ' 張照片">' +
           '<img class="thumb-img" src="' + escapeHtml(img.src) + '" alt="" loading="lazy"></button>';
       }).join('') + '</div>' +
       '</section>';
@@ -160,28 +160,191 @@
       '</section>';
   }
 
+  // ---------- 相簿燈箱(T13) ----------
+  // 點縮圖開燈箱看完整照片;封面固定第一張不變。
+  // 操作:上一張/下一張(按鈕、← →)、放大縮小(按鈕、+ -、滾輪、雙擊)、放大後可拖曳、
+  // 關閉(✕ 按鈕、點背景、Esc)。開關燈箱都不捲動頁面,關閉後焦點回到原縮圖。
+
+  var ZOOM_MIN = 1;
+  var ZOOM_MAX = 4;
+  var ZOOM_STEP = 0.5;
+
+  function createLightbox(images) {
+    var box = document.getElementById('lightbox');
+    if (!box || !images.length) { return null; }
+    var stage = document.getElementById('lightbox-stage');
+    var img = document.getElementById('lightbox-img');
+    var count = document.getElementById('lightbox-count');
+    var credit = document.getElementById('lightbox-credit');
+    var level = document.getElementById('lightbox-zoom-level');
+    var btnPrev = document.getElementById('lightbox-prev');
+    var btnNext = document.getElementById('lightbox-next');
+    var btnIn = document.getElementById('lightbox-zoom-in');
+    var btnOut = document.getElementById('lightbox-zoom-out');
+    var btnClose = document.getElementById('lightbox-close');
+
+    var index = 0;
+    var scale = 1;
+    var panX = 0;
+    var panY = 0;
+    var drag = null;
+    var opener = null;
+    var onChange = null;
+    var single = images.length < 2;
+
+    btnPrev.hidden = single;
+    btnNext.hidden = single;
+
+    function apply() {
+      img.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+      level.textContent = Math.round(scale * 100) + '%';
+      btnOut.disabled = scale <= ZOOM_MIN;
+      btnIn.disabled = scale >= ZOOM_MAX;
+      box.classList.toggle('is-zoomed', scale > 1);
+    }
+
+    function clampPan() {
+      // 放大後拖曳範圍限制在圖片邊界內
+      var maxX = Math.max(0, (img.offsetWidth * scale - stage.clientWidth) / 2);
+      var maxY = Math.max(0, (img.offsetHeight * scale - stage.clientHeight) / 2);
+      panX = Math.min(maxX, Math.max(-maxX, panX));
+      panY = Math.min(maxY, Math.max(-maxY, panY));
+    }
+
+    function zoomTo(next) {
+      var prev = scale;
+      scale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+      if (scale === 1) { panX = 0; panY = 0; } else if (prev) {
+        panX = panX * scale / prev;
+        panY = panY * scale / prev;
+        clampPan();
+      }
+      apply();
+    }
+
+    function show(i) {
+      index = (i + images.length) % images.length;
+      var item = images[index];
+      img.src = item.src;
+      img.alt = '第 ' + (index + 1) + ' 張照片';
+      count.textContent = (index + 1) + ' / ' + images.length;
+      credit.innerHTML = renderCredit(item.credit);
+      scale = 1; panX = 0; panY = 0;
+      apply();
+      if (onChange) { onChange(index); }
+    }
+
+    function onKey(ev) {
+      if (box.hidden) { return; }
+      var k = ev.key;
+      if (k === 'Escape') { close(); }
+      else if (k === 'ArrowLeft' && !single) { show(index - 1); }
+      else if (k === 'ArrowRight' && !single) { show(index + 1); }
+      else if (k === '+' || k === '=') { zoomTo(scale + ZOOM_STEP); }
+      else if (k === '-' || k === '_') { zoomTo(scale - ZOOM_STEP); }
+      else if (k === '0') { zoomTo(1); }
+      else if (k === 'Tab') { trapFocus(ev); return; }
+      else { return; }
+      ev.preventDefault();
+    }
+
+    function trapFocus(ev) {
+      var list = Array.prototype.filter.call(box.querySelectorAll('button, a[href]'), function (el) {
+        return !el.hidden && !el.disabled && el.offsetParent !== null;
+      });
+      if (!list.length) { return; }
+      var first = list[0];
+      var last = list[list.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { last.focus(); ev.preventDefault(); }
+      else if (!ev.shiftKey && document.activeElement === last) { first.focus(); ev.preventDefault(); }
+    }
+
+    function open(i, fromEl) {
+      opener = fromEl || null;
+      show(i);
+      box.hidden = false;
+      document.documentElement.classList.add('lightbox-open');
+      document.addEventListener('keydown', onKey);
+      btnClose.focus({ preventScroll: true });
+    }
+
+    function close() {
+      if (box.hidden) { return; }
+      box.hidden = true;
+      document.documentElement.classList.remove('lightbox-open');
+      document.removeEventListener('keydown', onKey);
+      img.removeAttribute('src');
+      // 焦點回到原縮圖,但不讓瀏覽器為了焦點捲動頁面
+      if (opener && opener.focus) { opener.focus({ preventScroll: true }); }
+    }
+
+    btnClose.addEventListener('click', close);
+    btnPrev.addEventListener('click', function () { show(index - 1); });
+    btnNext.addEventListener('click', function () { show(index + 1); });
+    btnIn.addEventListener('click', function () { zoomTo(scale + ZOOM_STEP); });
+    btnOut.addEventListener('click', function () { zoomTo(scale - ZOOM_STEP); });
+    level.addEventListener('click', function () { zoomTo(1); });
+
+    // 點背景(照片以外的空白處)關閉
+    box.addEventListener('click', function (ev) {
+      if (ev.target === box || ev.target === stage) { close(); }
+    });
+
+    // 雙擊照片:原尺寸 ↔ 2 倍
+    img.addEventListener('dblclick', function () { zoomTo(scale > 1 ? 1 : 2); });
+
+    // 滾輪縮放
+    stage.addEventListener('wheel', function (ev) {
+      ev.preventDefault();
+      zoomTo(scale + (ev.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP));
+    }, { passive: false });
+
+    // 放大後拖曳平移(滑鼠與觸控共用 Pointer Events)
+    img.addEventListener('pointerdown', function (ev) {
+      if (scale <= 1) { return; }
+      ev.preventDefault();
+      drag = { x: ev.clientX, y: ev.clientY, px: panX, py: panY };
+      box.classList.add('is-dragging');
+      if (img.setPointerCapture) { img.setPointerCapture(ev.pointerId); }
+    });
+    img.addEventListener('pointermove', function (ev) {
+      if (!drag) { return; }
+      panX = drag.px + (ev.clientX - drag.x);
+      panY = drag.py + (ev.clientY - drag.y);
+      clampPan();
+      apply();
+    });
+    function endDrag() { drag = null; box.classList.remove('is-dragging'); }
+    img.addEventListener('pointerup', endDrag);
+    img.addEventListener('pointercancel', endDrag);
+
+    return {
+      open: open,
+      onChange: function (fn) { onChange = fn; }
+    };
+  }
+
   function bindGallery(images) {
     var row = document.querySelector('.thumb-row');
-    var cover = document.getElementById('cover-img');
-    var credit = document.getElementById('cover-credit');
-    if (!row || !cover) { return; }
+    if (!row) { return; }
+    var lightbox = createLightbox(images);
+    if (!lightbox) { return; }
+    var thumbs = row.querySelectorAll('.thumb');
+
+    // 燈箱換張時,同步標出目前在看的縮圖
+    lightbox.onChange(function (i) {
+      Array.prototype.forEach.call(thumbs, function (el, n) {
+        el.classList.toggle('is-active', n === i);
+      });
+    });
+
     row.addEventListener('click', function (ev) {
       var btn = ev.target.closest('.thumb');
       if (!btn) { return; }
+      ev.preventDefault();
       var i = parseInt(btn.getAttribute('data-index'), 10);
       if (!images[i]) { return; }
-      cover.src = images[i].src;
-      if (credit) { credit.innerHTML = renderCredit(images[i].credit); }
-      Array.prototype.forEach.call(row.querySelectorAll('.thumb'), function (el) {
-        var on = el === btn;
-        el.classList.toggle('is-active', on);
-        el.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-      var top = document.querySelector('.cover');
-      if (top) {
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        top.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      }
+      lightbox.open(i, btn);
     });
   }
 
