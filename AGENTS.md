@@ -21,7 +21,7 @@
 | 規則 | 內容 |
 |------|------|
 | 認領 | 先把自己的名字寫進 TASKS.md 對應任務並 commit,先 commit 先得。沒認領不動工。 |
-| 分支 | 一律從 `dev` 開分支,命名 `agent/<任務編號>-<簡述>`,例:`agent/t9-add-jibei`。 |
+| 分支 | 一律從 `dev` 開分支,命名 `agent/<任務編號>-<簡述>`,例:`agent/t11-fetch-photos`。 |
 | PR | 所有 PR 進 `dev`,不直接 push `dev` / `main`,不自己 merge。merge 由 Nicky 決定。 |
 | 發佈 | 里程碑時才 `dev → main`;GitHub Pages 從 `main` 發佈。 |
 | handoff.md | 每個 agent 自己記:做了什麼、留下什麼坑、下一步建議。最新一筆放最上面。 |
@@ -58,12 +58,15 @@ penghu-travel-guide/
 │   ├── js/main.js       # 首頁渲染與篩選
 │   ├── js/place.js      # 詳情頁渲染
 │   ├── js/ai.js         # 預留 AI 接口(本期不實作)
-│   └── img/             # 自有或已確認授權的圖片(T6 待建),檔名 = <slug>.<ext>(jpg / jpeg / png / webp)
+│   ├── img/             # 景點照片(T11 已入庫 389 張),檔名 = <slug>-<n>.<ext>(jpg / jpeg / png / webp)
+│   └── docs/            # README 用的網站截圖
 ├── data/
 │   └── places.json      # 唯一事實來源:所有景點資料
 ├── scripts/
 │   ├── validate.py      # 資料驗證(CI 與本地共用)
-│   └── fetch_nsa.py     # 從澎管處官網產生/更新 places.json(T6 待建)
+│   ├── test_validate.py # validate.py 的 15 個單元測試
+│   ├── fetch_nsa.py     # 從澎管處官網產生/更新 places.json
+│   └── fetch_photos.py  # 從澎管處官網抓全部照片入庫(T11)
 └── .github/workflows/
     └── validate.yml     # CI:只跑 validate,不部署
 ```
@@ -197,7 +200,7 @@ penghu-travel-guide/
 | 規則(本檔位置) | 頁面上看得到的行為 |
 |------------------|--------------------|
 | `area` 只有 6 個值(§3) | 地區篩選列只出現資料裡有的鄉市(最多 6 顆)+ 「全部」 |
-| `category` 只有 6 個值(§3) | 首頁「類型」篩選列的鈕都來自這 6 個值,沒有其他 |
+| `category` 只有 10 個值(§3) | 首頁「類型」篩選列的鈕都來自這 10 個值,沒有其他 |
 | `slug` 唯一且不改(§3) | 每個景點有固定網址 `place.html?slug=<slug>`,可分享、不失效 |
 | `summary` 20–100 字(§3) | 首頁卡片高度整齊,摘要不會被截斷成半句 |
 | `description` ≤ 600 字(§3) | 詳情頁介紹維持一頁讀得完的長度,不會洗成長文 |
@@ -220,7 +223,7 @@ penghu-travel-guide/
 2. `scripts/validate.py` 的允許清單;
 3. `assets/js/main.js` 的 `AREA_ORDER` / `CATEGORY_ORDER` 排序陣列。
 
-前端篩選鈕依資料自動產生,但鈕的順序由 `main.js` 的排序陣列決定:新值不加進陣列會排到最後面,所以要同步改。官網出現新的景點類型時,`fetch_nsa.py`(T6 待建)會停下來報錯,提醒你走這個流程,不會默默塞進奇怪的值。
+前端篩選鈕依資料自動產生,但鈕的順序由 `main.js` 的排序陣列決定:新值不加進陣列會排到最後面,所以要同步改。官網出現新的景點類型時,`fetch_nsa.py` 會停下來報錯,提醒你走這個流程,不會默默塞進奇怪的值。
 
 **新增欄位:** 改三處,同一個 PR:本檔第 3 節欄位表 → `scripts/validate.py` → 要顯示的話再改 `assets/js/place.js`(或 `main.js`)。先改規則、再改程式。
 
@@ -255,6 +258,6 @@ penghu-travel-guide/
 | 2. GitHub Repository 連結 | https://github.com/nickyxu1985/penghu-travel-guide | ⬜ |
 | 3. 網頁連結 | GitHub Pages(main 發佈後填入) | ⬜ |
 | 4. AGENTS.md | 本檔 | ⬜ |
-| 5. 規則如何幫 AI 繼續新增內容 | 第 4 節 SOP + 第 7 節延伸性;實證為 T9「只給文件鏈,新增吉貝一筆」的 PR(合併後把 PR 連結填在這裡) | ⬜ |
+| 5. 規則如何幫 AI 繼續新增內容 | 第 4 節 SOP + 第 7 節延伸性;實證為 T6/T8/T11 全量資料管線(139 筆景點、389 張照片皆只靠文件鏈完成);原訂 T9「只給文件鏈,新增吉貝一筆」因 T6 全量入庫已涵蓋全部景點而不適用 | ⬜ |
 
 繳交前最後檢查:Pages 網址打得開、首頁有資料、隨機點三個詳情頁都正常、本表全部打勾。
