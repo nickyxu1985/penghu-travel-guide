@@ -4,23 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>景點介紹 | 澎湖旅遊指南</title>
+  <meta name="description" content="澎湖景點介紹。資料與照片來源：交通部觀光署澎湖國家風景區管理處。">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-  <header class="site-header">
-    <h1>澎湖旅遊指南</h1>
-    <nav class="site-nav"><a href="index.html">&larr; 回景點列表</a></nav>
+<body class="page-place">
+  <header class="topbar">
+    <nav class="topbar-inner" aria-label="主要導覽">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span>澎湖旅遊指南</a>
+      <div class="topbar-links">
+        <a class="topbar-link" href="index.html#areas">地區</a>
+        <a class="topbar-link" href="index.html#places">所有景點</a>
+      </div>
+    </nav>
   </header>
 
-  <main>
-    <article id="place-detail" class="place-detail" aria-live="polite">
-      <!-- 景點詳情由 assets/js/place.js 依 ?slug= 動態渲染 -->
-      <noscript>本站需要啟用 JavaScript 才能瀏覽景點介紹。</noscript>
-    </article>
+  <main id="place-root" aria-live="polite">
+    <!-- 景點詳情由 assets/js/place.js 依 ?slug= 動態渲染（AGENTS.md §5 詳情頁結構） -->
+    <noscript><div class="empty-state"><p class="empty-state-title">本站需要啟用 JavaScript 才能瀏覽景點介紹。</p></div></noscript>
   </main>
 
   <footer class="site-footer">
-    <p>資料來源:<a href="https://www.penghu-nsa.gov.tw/" target="_blank" rel="noopener">澎湖國家風景區管理處</a></p>
+    <div class="footer-inner">
+      <p class="footer-brand">澎湖旅遊指南</p>
+      <p class="footer-text">景點資料與照片來源：<a href="https://www.penghu-nsa.gov.tw/" target="_blank" rel="noopener">交通部觀光署澎湖國家風景區管理處</a>。開放時間、票價、船班等資訊常有變動，出發前請至官網確認。</p>
+    </div>
   </footer>
 
   <script src="assets/js/place.js"></script>

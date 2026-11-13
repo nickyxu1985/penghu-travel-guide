@@ -1,1 +1,32 @@
-IyBUQVNLUy5tZCDigJQg5YiG5bel6KGoCgojIyDoqo3poJjopo/liYcKCi0g6KqN6aCYID0g5YWI5oqK6Ieq5bex55qE5ZCN5a2X5a+r6YCy5pys6KGo5bCN5oeJ5Lu75YuZ5LimIGNvbW1pdCwqKuWFiCBjb21taXQg5YWI5b6XKirjgIIKLSDkuIvooajlt7Llr6vmrbvosqDosqzkuro76KaB5o+b5Lq6LOeUseePvuS7u+iyoOiyrOS6uuWcqCBoYW5kb2ZmLm1kIOiou+aYjuS4puaUueacrOihqOOAggotIOS7u+WLmeS4jeS+neaXpeacn+aOkueoiyzkvp3kuIvooajpoIbluo/oiIfkvp3os7Tpl5zkv4LmjqjpgLI75YmN572u5Lu75YuZ5pyq5a6M5oiQ5bCx5LiN6KaB6ZaL5aeL44CCCi0g6YCy5bqm57SA6YyE5YiG5belOmhhbmRvZmYubWQg55Sx5ZCEIGFnZW50IOWQhOiHquiomOmMhDtQUk9HUkVTUy5tZCjlhaggcmVwbyDpgLLluqYgbG9nKee1seS4gOeUsSBJbnN0aW5jdCDnmbvpjIQs5YW25LuW5Lq65Y+q6K6A44CCCi0g5ZSv5LiA56Gs5oCn5pmC6ZaTOioqMjAyNi0xMS0xNijpgLHkuIAp57mz5LqkKiooVDEwKeOAggotIOaJgOaciSBQUiDpgLIgYGRldmAg5YiG5pSvLOS4jeebtOaOpeWLlSBgbWFpbmA75LiN5Li75YuVIG1lcmdlLG1lcmdlIOeUsSBOaWNreSDmsbrlrprjgIIKCiMjIOS7u+WLmeWIl+ihqAoKfCAjIHwg6LKg6LKs5Lq6IHwg5YWn5a65IHwg5L6d6LO0IHwg5a6M5oiQ5a6a576pIHwg54uA5oWLIHwKfC0tLXwtLS0tLS0tLXwtLS0tLS18LS0tLS0tfC0tLS0tLS0tLS18LS0tLS0tfAp8IFQxIHwgTmlja3kgfCDplosgcHVibGljIHJlcG8obWFpbiArIGRldinjgIFHaXRIdWIgUGFnZXMg55m8IG1haW4gfCDnhKEgfCByZXBvIOWFrOmWi+WPr+imiyxQYWdlcyDlt7LllZ/nlKggfCDinIUg5bey5a6M5oiQIHwKfCBUMiB8IEluc3RpbmN0IHwg5bCI5qGI6aqo5p62IFBSOmluZGV4Lmh0bWzjgIFwbGFjZS5odG1s44CBYXNzZXRzL2pzKG1haW4vcGxhY2UvYWkp44CBUkVBRE1F44CBU1BFQ+OAgVRBU0tT44CBaGFuZG9mZuOAgWRhdGEvcGxhY2VzLmpzb24g56m66Zmj5YiX44CBLmdpdGlnbm9yZSB8IFQxIHwgUFIg6ZaL5Ye66YCyIGRldjvnqbros4fmlpnkuIvpppbpoIHlj6/ngI/opr3kuI3loLHpjK8gfCDinIUg5bey5ZCI5L21IGRldihQUiAjMSkgfAp8IFQzIHwgSGFyayB8IEFHRU5UUy5tZCDkuIPnr4AgKyDmlofku7bplrHoroDpj4g7U0RELm1kKHNjaGVtYSDmrITkvY3ooaggKyBmZXRjaCDmrITkvY3lsI3mmKDopo/liYcpIHwgVDIgfCDlhanku73mlofku7YgUFIg6YCyIGRldjvplrHoroDpj4joiIcgUkVBRE1FL1NQRUMg5LiA6Ie0O3NjaGVtYSDopobok4vliY3nq6/lt7LnlKjmrITkvY0gfCDinIUg5bey5ZCI5L21IGRldihQUiAjMikgfAp8IFQ0IHwgSGFyayB8IHN0eWxlLmNzcyDoppboprrlr6bkvZws5bCN5oeJIEFHRU5UUy5tZCDpoqjmoLznr4AgfCBUMyB8IHN0eWxlLmNzcyBQUiDpgLIgZGV2O+mmlumggS/oqbPmg4XpoIHlpZfnlKjlvozniYjpnaLlj6/ovqjjgIHnqbrmhYvnvo7op4AgfCDinIUg5bey5ZCI5L21IGRldihQUiAjMikgfAp8IFQ1IHwgSW5zdGluY3QgfCB2YWxpZGF0ZS5weSArIHZhbGlkYXRlLnltbChDSSDmk4vlo57os4fmlpkpIHwgVDMoc2NoZW1hIOWumuahiCkgfCBDSSB3b3JrZmxvdyDpgLIgZGV2O+WjniBzY2hlbWEg55qE6LOH5paZ5pyD6KKr5pOL5LiLIHwg4pyFIOW3suWQiOS9tSBkZXYoUFIgIzYpIHwKfCBUNiB8IEluc3RpbmN0IHwgZmV0Y2hfbnNhLnB5IOaZr+m7nuWFqOmHj+WFpeW6qyzpgY4gdmFsaWRhdGUgfCBUNSB8IHBsYWNlcy5qc29uIOWFqOmHj+izh+aWmSBQUiDpgLIgZGV2O0NJIOWFqOe2oCB8IOKchSDlt7LlkIjkvbUgZGV2KFBSICM4KSB8CnwgVDcgfCBNdXNlIHwg5a+pIFQyL1QzL1Q0IFBSKHJ1YnJpYyDkuIPnr4DjgIHplrHoroDpj4jjgIHoppboprogUUEpLOmWiyBpc3N1ZSDkuI3nm7TmjqXmlLkgfCBUMuOAgVQz44CBVDQgfCDlr6nmn6XmhI/opovku6UgaXNzdWUg5ZGI54++LOe9suWQjea4healmjvkuI3nm7TmjqUgcHVzaCDkv67mlLkgfCDinIUg5a6M5oiQKGlzc3VlICMzLyM0LyM1IOW3suS/ruS4pumXnOmWiSkgfAp8IFQ4IHwgQ3VlIHwg6LOH5paZ5ZOB6LOq5oqK6ZecOnN1bW1hcnkg5oq95a+p44CBY2F0ZWdvcnkg5qCh5q2jO1c4IOeyvumBuCA4IOethuWCmeaPtCB8IFQ2IHwg5oq95a+p57WQ5p6c5LulIGlzc3VlIOaIliBQUiDlkYjnj747OCDnrYblgpnmj7Tos4fmlpnlj6/nlKggfCDinIUg5bey5ZCI5L21IGRldihQUiAjOSkgfAp8IFQ5IHwgQ3VlIOWft+ihjCAvIE11c2Ug6amX5pS2IHwg56S656+E44CM5Y+q57Wm5paH5Lu26Y+ILOaWsOWinuWQieiyneS4gOethuOAjVBSIHwgVDbjgIFUNyB8IEN1ZSDlj6rpnaDmlofku7bpj4jplovlh7rmlrDlop7lkInosp3mma/pu57nmoQgUFI7TXVzZSDpqZfmlLboqbIgUFIg5pyq5Zue5ZWP5Lu75L2V5Lq6IHwg5LiN6YGp55SoKFQ2IOWFqOmHj+WFpeW6q+a2teiTiyzlrpjntrLlt7LnhKHmnKrmlLbpjITmma/pu54pIHwKfCBUMTEgfCBJbnN0aW5jdCB8IOWumOe2sueFp+eJh+WFqOmHj+WFpeW6qzpzY2hlbWEg5pS55aSa5ZyWIGBpbWFnZXNg44CBZmV0Y2hfcGhvdG9zLnB5IOaKk+WFqOmDqOeFp+eJh+OAgeips+aDhemggei8quaSrSvnvbLlkI3lh7romZXjgIF2YWxpZGF0b3Iv5paH5Lu25ZCM5q2lIHwgVDYgfCAxMzkg562GIGltYWdlcyDlhaXluqs7dmFsaWRhdGUg6IiH5Zau5YWD5ris6Kmm5YWo57agO1BSIOmAsiBkZXYgfCDinIUg5bey5ZCI5L21IGRldihQUiAjMTApIHwKfCBUMTIgfCBIYXJrIHwg56ys5LqM6ZqO5q6154mI6Z2i6aKo5qC86YeN6Kit6KiI77ya5L6dIEFHRU5UUy5tZCDCpzUg56ys5LqM6ZqO5q616KaP56+E6YeN5a+r54mI5Z6L44CBQ1NT44CB5YmN56uvIEpT77yM5Y+q5L+d55WZIHBsYWNlcy5qc29uIOizh+aWmeagvOW8j++8jOe0lOmdnOaFiyB8IEFHRU5UUy5tZCDCpzXvvIjnrKzkuozpmo7mrrXvvIkgfCDmlrDniYjliY3nq68gUFIg6YCyIGRldu+8m0NJIOWFqOe2oO+8m0FHRU5UUy5tZCDCpzUg5bey5ZCM5q2l54K65paw6aKo5qC8IHwg6YCy6KGM5Lit77yI5b6F5a+m5L2c77yJIHwKfCBUMTAgfCBOaWNreSB8IDExLzE2KOmAseS4gCnnubPkuqQs5Y+q57mz5LiN5pS556K8IHwg5YWo6YOoIHwg5L2c5qWt5pa8IDIwMjYtMTEtMTYg57mz5LqkIHwg5b6F6ZaL5aeLIHwKCiMjIOmpl+aUtuaWueazleirluWwjeaHiQoKLSBUOSDmmK8gU1BFQy5tZCDpqZfmlLbmqJnmupbikaIoaGFuZG9mZiDnnJ/nmoTmnInnlKgp55qE5a+m5Zyw5ryU57e0OkN1ZSDlj6rpnaDmlofku7bpj4jlrozmiJDkuIDnrYbmlrDlop7jgIIKLSDpqZfmlLbmqJnmupbikaDikaHnlLEgbWVyZ2Ug57SA6YyE5L2Q6K2J44CCCg==
+# TASKS.md — 分工表
+
+## 認領規則
+
+- 認領 = 先把自己的名字寫進本表對應任務並 commit,**先 commit 先得**。
+- 下表已寫死負責人;要換人,由現任負責人在 handoff.md 註明並改本表。
+- 任務不依日期排程,依下表順序與依賴關係推進;前置任務未完成就不要開始。
+- 進度紀錄分工:handoff.md 由各 agent 各自記錄;PROGRESS.md(全 repo 進度 log)統一由 Instinct 登錄,其他人只讀。
+- 唯一硬性時間:**2026-11-16(週一)繳交**(T10)。
+- 所有 PR 進 `dev` 分支,不直接動 `main`;不主動 merge,merge 由 Nicky 決定。
+
+## 任務列表
+
+| # | 負責人 | 內容 | 依賴 | 完成定義 | 狀態 |
+|---|--------|------|------|----------|------|
+| T1 | Nicky | 開 public repo(main + dev)、GitHub Pages 發 main | 無 | repo 公開可見,Pages 已啟用 | ✅ 已完成 |
+| T2 | Instinct | 專案骨架 PR:index.html、place.html、assets/js(main/place/ai)、README、SPEC、TASKS、handoff、data/places.json 空陣列、.gitignore | T1 | PR 開出進 dev;空資料下首頁可瀏覽不報錯 | ✅ 已合併 dev(PR #1) |
+| T3 | Hark | AGENTS.md 七節 + 文件閱讀鏈;SDD.md(schema 欄位表 + fetch 欄位對映規則) | T2 | 兩份文件 PR 進 dev;閱讀鏈與 README/SPEC 一致;schema 覆蓋前端已用欄位 | ✅ 已合併 dev(PR #2) |
+| T4 | Hark | style.css 視覺實作,對應 AGENTS.md 風格節 | T3 | style.css PR 進 dev;首頁/詳情頁套用後版面可辨、空態美觀 | ✅ 已合併 dev(PR #2) |
+| T5 | Instinct | validate.py + validate.yml(CI 擋壞資料) | T3(schema 定案) | CI workflow 進 dev;壞 schema 的資料會被擋下 | ✅ 已合併 dev(PR #6) |
+| T6 | Instinct | fetch_nsa.py 景點全量入庫,過 validate | T5 | places.json 全量資料 PR 進 dev;CI 全綠 | ✅ 已合併 dev(PR #8) |
+| T7 | Muse | 審 T2/T3/T4 PR(rubric 七節、閱讀鏈、視覺 QA),開 issue 不直接改 | T2、T3、T4 | 審查意見以 issue 呈現,署名清楚;不直接 push 修改 | ✅ 完成(issue #3/#4/#5 已修並關閉) |
+| T8 | Cue | 資料品質把關:summary 抽審、category 校正;W8 精選 8 筆備援 | T6 | 抽審結果以 issue 或 PR 呈現;8 筆備援資料可用 | ✅ 已合併 dev(PR #9) |
+| T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈,新增吉貝一筆」PR | T6、T7 | Cue 只靠文件鏈開出新增吉貝景點的 PR;Muse 驗收該 PR 未回問任何人 | 不適用(T6 全量入庫涵蓋,官網已無未收錄景點) |
+| T11 | Instinct | 官網照片全量入庫:schema 改多圖 `images`、fetch_photos.py 抓全部照片、詳情頁輪播+署名出處、validator/文件同步 | T6 | 139 筆 images 入庫;validate 與單元測試全綠;PR 進 dev | ✅ 已合併 dev(PR #10) |
+| T12 | Hark | 第二階段版面風格重設計：依 AGENTS.md §5 第二階段規範重寫版型、CSS、前端 JS，只保留 places.json 資料格式，純靜態 | AGENTS.md §5（第二階段） | 新版前端 PR 進 dev；CI 全綠；AGENTS.md §5 已同步為新風格 | 進行中（待實作） |
+| T10 | Nicky | 11/16(週一)繳交,只繳不改碼 | 全部 | 作業於 2026-11-16 繳交 | 待開始 |
+
+## 驗收方法論對應
+
+- T9 是 SPEC.md 驗收標準③(handoff 真的有用)的實地演練:Cue 只靠文件鏈完成一筆新增。
+- 驗收標準①②由 merge 紀錄佐證。
