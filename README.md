@@ -71,7 +71,7 @@ flowchart LR
     A[澎管處官網<br/>景點列表 + 詳情頁] -->|fetch_nsa.py<br/>節流 ≥1.2s + 退避重試| B[data/places.json<br/>139 筆景點]
     A -->|fetch_photos.py<br/>詳情頁輪播圖| C[assets/img/<br/>389 張 JPEG]
     C --> B
-    B -->|validate.py V10<br/>schema 檢查| D{結果}
+    B -->|validate.py V1–V13<br/>schema 檢查| D{結果}
     D -->|本地| E[15 個單元測試<br/>test_validate.py]
     D -->|push / PR| F[GitHub Actions<br/>validate.yml]
     E --> G[merge 進 dev]
@@ -94,6 +94,7 @@ flowchart LR
 | T6 | Instinct | fetch_nsa.py 全量抓取 139 筆景點 | [PR #8](https://github.com/nickyxu1985/penghu-travel-guide/pull/8) |
 | T7 | Muse | 審查 T2/T3/T4,以 issue 呈現、不直接改碼 | issue #3/#4/#5,已由 [PR #7](https://github.com/nickyxu1985/penghu-travel-guide/pull/7) 修正 |
 | T8 | Cue | 資料品質把關:139 筆 summary 改寫 + tags 補齊 | [PR #9](https://github.com/nickyxu1985/penghu-travel-guide/pull/9) |
+| T9 | Cue 執行 / Muse 驗收 | 示範「只給文件鏈，新增吉貝一筆」 | 不適用（T6 全量入庫已涵蓋，官網已無未收錄景點） |
 | T11 | Instinct | 官網照片全量入庫:多圖 schema、389 張照片、詳情頁輪播 | [PR #10](https://github.com/nickyxu1985/penghu-travel-guide/pull/10) |
 | 里程碑 | Nicky | dev → main 合併 | [PR #11](https://github.com/nickyxu1985/penghu-travel-guide/pull/11) |
 | T10 | Nicky | 2026-11-16 繳交 | 待開始 |
@@ -127,7 +128,7 @@ Multi-agent 協作最大的風險是黑箱:AI 產出了東西,但沒有人知道
 | 繳交內容 4:`AGENTS.md` | [AGENTS.md](AGENTS.md):目的與讀者、目錄結構與命名、資料欄位定義、新增景點 SOP、視覺風格、禁止清單等,16KB 完整規則 |
 | 繳交內容 5:規則如何幫助 AI 新增頁面/內容 | 新增一筆景點 = 只改 `data/places.json`,欄位、命名、圖片規則全在 AGENTS.md §2–§6;schema 由 validate.py 強制執行,AI 產出的資料不合規會在本地與 CI 被擋下 |
 | 7~8 分:`AGENTS.md` 清楚描述專案目的、結構與開發規則,網頁可正常瀏覽並上傳 GitHub | 規則文件共 6 份、互相引用不重複;網站已在 GitHub Pages 上線,139 個景點頁皆可瀏覽 |
-| 9~10 分:專案規則清楚、具體 | 規則不是描述性文字,而是可執行的檢查:欄位允許值、slug 拼音規則、圖片檔名規則都由 `scripts/validate.py`(V10)+ 15 個單元測試具體驗證 |
+| 9~10 分:專案規則清楚、具體 | 規則不是描述性文字,而是可執行的檢查:欄位允許值、slug 拼音規則、圖片檔名規則都由 `scripts/validate.py`（V1–V13）+ 15 個單元測試具體驗證 |
 | 9~10 分:AI 可以依照文件內容繼續新增或修改頁面 | 已實證:4 個 AI agent 全程只靠文件鏈協作,完成 11 項任務、10 個 PR;T8(Cue)逐筆核對 139 筆資料時只依 SDD.md 的欄位對映規則判斷 |
 | 9~10 分:網頁內容與專案規則有良好對應 | 網站每個畫面都可回指到規則:卡片篩選順序 = AGENTS.md §3 地區/類型順序;詳情頁欄位順序 = SDD.md §3.2;照片署名格式 = AGENTS.md §3 `credit` 規範;不符規則的資料進不了網站(CI) |
 | 9~10 分:具有重複使用與延伸的可能性 | 文件鏈 + validator + fetcher 可直接用於下一批資料;`assets/js/ai.js` 預留 AI 問答接口,SPEC.md 列出 plan.html 行程安排、TDX 即時資料等延伸方向 |
